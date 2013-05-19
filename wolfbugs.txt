@@ -1,0 +1,33 @@
+Toke: own bot
+
+* startrek fails @ who vote who				-Done
+	
+* rename fails
+* quit fails (during voting at least)
+	* sets null in playerlist
+* 2 wolve text
+* trim problem
+
+* start at 12 ppl
+* delay end with not enough ppl
+* End vote at all voted
+* Shorter nights when wolf kills quickly
+* double time for 2 wolves
+* join/vote from chat (not PM)
+	*voice only at round start, not game start
+
+Meer rollen:
+	*Jager
+	*Heks (life and die drink, can keep somebody alive once and kill once).
+		(Is informed about who does before using life drink).
+	*Cupido
+		*Connect 2 lovers at start. (If both survive they win, if one die they both die)
+	*Village idiot: Doesn't die to lynch, but loses right to vote.
+
+* Channel join msg
+
+* Read msg file and put results in Map instead of reading the file over and over again.
+	* Add !refresh command to reread file.
+* Stats (about win/loss rates etc)
+	
+	

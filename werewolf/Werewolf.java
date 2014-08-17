@@ -93,29 +93,24 @@ public class Werewolf extends PircBot {
 
 			while (!lineRead.startsWith("botname"))
 				lineRead = buff.readLine();
-			name = lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length());
+			name = lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length());
 
 			while (!lineRead.startsWith("network"))
 				lineRead = buff.readLine();
-			network = lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length());
+			network = lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length());
 
 			while (!lineRead.startsWith("channel"))
 				lineRead = buff.readLine();
-			gameChan = lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length());
+			gameChan = lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length());
 
 			while (!lineRead.startsWith("nickcmd"))
 				lineRead = buff.readLine();
-			command = lineRead
-					.substring(lineRead.indexOf("=") + 2, lineRead.length());
+			command = lineRead.substring(lineRead.indexOf("=") + 2, lineRead.length());
 
 			while (!lineRead.startsWith("debug"))
 				lineRead = buff.readLine();
 
-			String onoff = lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length());
+			String onoff = lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length());
 			if (onoff.equalsIgnoreCase("on"))
 				debug = true;
 			else if (onoff.equalsIgnoreCase("off"))
@@ -128,15 +123,13 @@ public class Werewolf extends PircBot {
 			while (!lineRead.startsWith("delay"))
 				lineRead = buff.readLine();
 
-			delay = Long.parseLong(lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length()));
+			delay = Long.parseLong(lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length()));
 			this.setMessageDelay(delay);
 
 			while (!lineRead.startsWith("jointime"))
 				lineRead = buff.readLine();
 			try {
-				int tmp = Integer.parseInt(lineRead.substring(
-						lineRead.indexOf("=") + 2, lineRead.length()));
+				int tmp = Integer.parseInt(lineRead.substring(lineRead.indexOf("=") + 2, lineRead.length()));
 				joinTime = tmp;
 			} catch (NumberFormatException nfx) {
 				System.out.println("Bad day time value; defaulting to 60 seconds");
@@ -146,8 +139,7 @@ public class Werewolf extends PircBot {
 			while (!lineRead.startsWith("daytime"))
 				lineRead = buff.readLine();
 			try {
-				int tmp = Integer.parseInt(lineRead.substring(
-						lineRead.indexOf("=") + 2, lineRead.length()));
+				int tmp = Integer.parseInt(lineRead.substring(lineRead.indexOf("=") + 2, lineRead.length()));
 				dayTime = tmp;
 			} catch (NumberFormatException nfx) {
 				System.out.println("Bad day time value; defaulting to 90 seconds");
@@ -157,8 +149,7 @@ public class Werewolf extends PircBot {
 			while (!lineRead.startsWith("nighttime"))
 				lineRead = buff.readLine();
 			try {
-				int tmp = Integer.parseInt(lineRead.substring(
-						lineRead.indexOf("=") + 2, lineRead.length()));
+				int tmp = Integer.parseInt(lineRead.substring(lineRead.indexOf("=") + 2, lineRead.length()));
 				nightTime = tmp;
 			} catch (NumberFormatException nfx) {
 				System.out.println("Bad night time value; defaulting to 45 seconds");
@@ -168,8 +159,7 @@ public class Werewolf extends PircBot {
 			while (!lineRead.startsWith("votetime"))
 				lineRead = buff.readLine();
 			try {
-				int tmp = Integer.parseInt(lineRead.substring(
-						lineRead.indexOf("=") + 2, lineRead.length()));
+				int tmp = Integer.parseInt(lineRead.substring(lineRead.indexOf("=") + 2, lineRead.length()));
 				voteTime = tmp;
 			} catch (NumberFormatException nfx) {
 				System.out.println("Bad vote time value; defaulting to 90 seconds");
@@ -179,8 +169,7 @@ public class Werewolf extends PircBot {
 			while (!lineRead.startsWith("tie"))
 				lineRead = buff.readLine();
 
-			onoff = lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length());
+			onoff = lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length());
 			if (onoff.equalsIgnoreCase("on"))
 				tieGame = true;
 			else if (onoff.equalsIgnoreCase("off"))
@@ -193,8 +182,7 @@ public class Werewolf extends PircBot {
 			while (!lineRead.startsWith("idlebarks"))
 				lineRead = buff.readLine();
 
-			onoff = lineRead.substring(lineRead.lastIndexOf(" ") + 1,
-					lineRead.length());
+			onoff = lineRead.substring(lineRead.lastIndexOf(" ") + 1, lineRead.length());
 			if (onoff.equalsIgnoreCase("on"))
 				doBarks = true;
 			else if (onoff.equalsIgnoreCase("off"))
@@ -231,8 +219,7 @@ public class Werewolf extends PircBot {
 				File error = new File("error.log");
 				if (!file.exists())
 					file.createNewFile();
-				PrintStream errorLog = new PrintStream(
-						new FileOutputStream(error, true));
+				PrintStream errorLog = new PrintStream(new FileOutputStream(error, true));
 				System.setErr(errorLog);
 				System.err.println((new Date()).toString());
 				System.err.println("Starting error log....");
@@ -249,14 +236,62 @@ public class Werewolf extends PircBot {
 	}
 
 	// overloaded method that calls the method with 2 player names
-	protected String getFromFile(String text, String player, int time, int type,
-			String role) {
+	private String getFromFile(String text, int type) {
+		return getFromFile(text, null, null, 0, type, null);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, int type) {
+		return getFromFile(text, player, null, 0, type, null);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, int time, int type) {
+		return getFromFile(text, null, null, time, type, null);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, int time, int type) {
+		return getFromFile(text, player, null, time, type, null);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, int type, String role) {
+		return getFromFile(text, null, null, 0, type, role);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, int type, String role) {
+		return getFromFile(text, player, null, 0, type, role);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, int time, int type, String role) {
+		return getFromFile(text, null, null, time, type, role);
+	}
+	
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, String player2, int type) {
+		return getFromFile(text, player, player2, 0, type, null);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, String player2, int time, int type) {
+		return getFromFile(text, player, player2, time, type, null);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, String player2, int type, String role) {
+		return getFromFile(text, player, player2, 0, type, role);
+	}
+
+	// overloaded method that calls the method with 2 player names
+	private String getFromFile(String text, String player, int time, int type, String role) {
 		return getFromFile(text, player, null, time, type, role);
 	}
 
 	// a couple of game string need 2 player names, so this is the ACTUAL method
-	protected String getFromFile(String text, String player, String player2,
-			int time, int type, String role) {
+	protected String getFromFile(String text, String player, String player2, int time, int type, String role) {
 		FileReader reader;
 		BufferedReader buff;
 
@@ -300,23 +335,19 @@ public class Werewolf extends PircBot {
 
 					toSend = toSend.replaceAll(
 							"RANDDUR",
-							((int) (Math.random() * 2)) + " days, "
-									+ two.format((int) (Math.random() * 24)) + ":"
-									+ two.format((int) (Math.random() * 61)) + ":"
-									+ two.format((int) (Math.random() * 61)));
-					toSend = toSend.replaceAll("RANDNUM", ""
-							+ ((int) (Math.random() * 50) + 1));
+							((int) (Math.random() * 2)) + " days, " + two.format((int) (Math.random() * 24)) + ":"
+									+ two.format((int) (Math.random() * 61)) + ":" + two.format((int) (Math.random() * 61)));
+					toSend = toSend.replaceAll("RANDNUM", "" + ((int) (Math.random() * 50) + 1));
 
 					return toSend;
 					// break;
 
 				case NARRATION: // blue colour formatting
-					toSend = toSend.replaceAll("PLAYER2", Colors.DARK_BLUE + Colors.BOLD
-							+ player2 + Colors.NORMAL + Colors.DARK_BLUE);
-					toSend = toSend.replaceAll("PLAYER", Colors.DARK_BLUE + Colors.BOLD
-							+ player + Colors.NORMAL + Colors.DARK_BLUE);
-					toSend = toSend.replaceAll("TIME", Colors.DARK_BLUE + Colors.BOLD
-							+ time + Colors.NORMAL + Colors.DARK_BLUE);
+					toSend = toSend.replaceAll("PLAYER2", Colors.DARK_BLUE + Colors.BOLD + player2 + Colors.NORMAL
+							+ Colors.DARK_BLUE);
+					toSend = toSend.replaceAll("PLAYER", Colors.DARK_BLUE + Colors.BOLD + player + Colors.NORMAL
+							+ Colors.DARK_BLUE);
+					toSend = toSend.replaceAll("TIME", Colors.DARK_BLUE + Colors.BOLD + time + Colors.NORMAL + Colors.DARK_BLUE);
 					toSend = getWolfFromFile(toSend);
 					toSend = toSend.replaceAll("BOTNAME", this.getNick());
 					toSend = toSend.replaceAll("ROLE", role);
@@ -324,12 +355,9 @@ public class Werewolf extends PircBot {
 					// break;
 
 				case GAME: // red colour formatting
-					toSend = toSend.replaceAll("PLAYER2", Colors.BROWN + Colors.UNDERLINE
-							+ player2 + Colors.NORMAL + Colors.RED);
-					toSend = toSend.replaceAll("PLAYER", Colors.BROWN + Colors.UNDERLINE
-							+ player + Colors.NORMAL + Colors.RED);
-					toSend = toSend.replaceAll("TIME", Colors.BROWN + Colors.UNDERLINE
-							+ time + Colors.NORMAL + Colors.RED);
+					toSend = toSend.replaceAll("PLAYER2", Colors.BROWN + Colors.UNDERLINE + player2 + Colors.NORMAL + Colors.RED);
+					toSend = toSend.replaceAll("PLAYER", Colors.BROWN + Colors.UNDERLINE + player + Colors.NORMAL + Colors.RED);
+					toSend = toSend.replaceAll("TIME", Colors.BROWN + Colors.UNDERLINE + time + Colors.NORMAL + Colors.RED);
 					toSend = getWolfFromFile(toSend);
 					toSend = toSend.replaceAll("BOTNAME", this.getNick());
 					toSend = toSend.replaceAll("ROLE", role);
@@ -337,12 +365,12 @@ public class Werewolf extends PircBot {
 					// break;
 
 				case CONTROL: // Green colour formatting
-					toSend = toSend.replaceAll("PLAYER2", Colors.DARK_GREEN
-							+ Colors.UNDERLINE + player2 + Colors.NORMAL + Colors.DARK_GREEN);
-					toSend = toSend.replaceAll("PLAYER", Colors.DARK_GREEN
-							+ Colors.UNDERLINE + player + Colors.NORMAL + Colors.DARK_GREEN);
-					toSend = toSend.replaceAll("TIME", Colors.DARK_GREEN
-							+ Colors.UNDERLINE + time + Colors.NORMAL + Colors.DARK_GREEN);
+					toSend = toSend.replaceAll("PLAYER2", Colors.DARK_GREEN + Colors.UNDERLINE + player2 + Colors.NORMAL
+							+ Colors.DARK_GREEN);
+					toSend = toSend.replaceAll("PLAYER", Colors.DARK_GREEN + Colors.UNDERLINE + player + Colors.NORMAL
+							+ Colors.DARK_GREEN);
+					toSend = toSend.replaceAll("TIME", Colors.DARK_GREEN + Colors.UNDERLINE + time + Colors.NORMAL
+							+ Colors.DARK_GREEN);
 					toSend = getWolfFromFile(toSend);
 					toSend = toSend.replaceAll("BOTNAME", this.getNick());
 					toSend = toSend.replaceAll("ROLE", role);
@@ -365,24 +393,20 @@ public class Werewolf extends PircBot {
 
 	private String getWolfFromFile(String toSend) {
 		if (players2.numWolves() != 0) {
-			return toSend.replaceAll(
-					"WOLF",
-					(players2.numWolves() == 1 ? getFromFile("1-WOLF", null, 0, NONE,
-							null) : getFromFile("MANY-WOLVES", null, 0, NONE, null)));
+			return toSend.replaceAll("WOLF",
+					(players2.numWolves() == 1 ? getFromFile("1-WOLF", NONE) : getFromFile("MANY-WOLVES", NONE)));
 		}
 		return toSend;
 	}
 
 	@Override
-	protected void onPrivateMessage(String aSender, String login,
-			String hostname, String message) {
+	protected void onPrivateMessage(String aSender, String login, String hostname, String message) {
 		aSender = message.substring(0, message.indexOf(" "));
 		message = message.substring(message.indexOf(" ") + 1);
 		if (status != GameStatus.IDLE) // commands only work if the game is on
 		{
 			int sender = players2.getPlayerNumber(aSender);
-			int target = players2.getPlayerNumber(message.substring(
-					message.indexOf(" ") + 1, message.length()).trim());
+			int target = players2.getPlayerNumber(message.substring(message.indexOf(" ") + 1, message.length()).trim());
 
 			if (message.toLowerCase().equalsIgnoreCase("join")) // join the game
 			{
@@ -391,8 +415,7 @@ public class Werewolf extends PircBot {
 			}
 
 			if (sender != -1) {
-				if (status == GameStatus.VOTE
-						&& message.toLowerCase().startsWith("vote"))
+				if (status == GameStatus.VOTE && message.toLowerCase().startsWith("vote"))
 				// commands for when it's vote time && vote to lynch someone.
 				{
 					doVote(sender, target);
@@ -422,41 +445,29 @@ public class Werewolf extends PircBot {
 							wolfVictim2.addVote(sender, target);
 
 							if (players2.numWolves() == 1) {
-								this.sendNotice(
-										sender,
-										getFromFile("WOLF-CHOICE", players2.get(target), 0, NOTICE,
-												null));
+								this.sendNotice(sender, getFromFile("WOLF-CHOICE", players2.get(target), NOTICE));
 							} else {
-								this.sendNotice(
-										sender,
-										getFromFile("WOLVES-CHOICE", players2.get(target), 0,
-												NOTICE, null));
+								this.sendNotice(sender, getFromFile("WOLVES-CHOICE", players2.get(target), NOTICE));
 
 								for (int i = 0; i < players2.numWolves(); i++) {
 									if (!(players2.getWolve(i) == sender))
-										this.sendNotice(
-												players2.getWolve(i),
-												getFromFile("WOLVES-CHOICE-OTHER",
-														players2.get(sender), players2.get(target), 0,
-														NOTICE, null));
+										this.sendNotice(players2.getWolve(i),
+												getFromFile("WOLVES-CHOICE-OTHER", players2.get(sender), players2.get(target), NOTICE));
 								}
 							}
 
 						} else
-							this.sendNotice(sender,
-									getFromFile("NOT-WOLF", null, 0, NOTICE, null));
+							this.sendNotice(sender, getFromFile("NOT-WOLF", NOTICE));
 					}
 					if (message.toLowerCase().startsWith("see")) // only the seer may
 																												// watch over someone
 					{
 						if (!players2.isSeer(sender)) {
-							this.sendNotice(sender,
-									getFromFile("NOT-SEER", null, 0, NOTICE, null));
+							this.sendNotice(sender, getFromFile("NOT-SEER", NOTICE));
 							return;
 						}
 						if (players2.isDead(sender)) {
-							this.sendNotice(sender,
-									getFromFile("SEER-DEAD", null, 0, NOTICE, null));
+							this.sendNotice(sender, getFromFile("SEER-DEAD", NOTICE));
 							return;
 						}
 						if (target != -1) {
@@ -465,8 +476,7 @@ public class Werewolf extends PircBot {
 								return;
 							}
 							toSee = target;
-							this.sendNotice(sender,
-									getFromFile("WILL-SEE", players2.get(toSee), 0, NOTICE, null));
+							this.sendNotice(sender, getFromFile("WILL-SEE", players2.get(toSee), NOTICE));
 						}
 					}
 				}
@@ -484,21 +494,15 @@ public class Werewolf extends PircBot {
 					if (status != GameStatus.PRE) {
 						if (players2.isWolf(sender)) {
 							if (players2.numWolves() == 1)
-								this.sendNotice(sender,
-										getFromFile("W-ROLE", null, 0, NOTICE, null));
+								this.sendNotice(sender, getFromFile("W-ROLE", NOTICE));
 							else {
-								this.sendNotice(
-										sender,
-										getFromFile("WS-ROLE", players2.getOtherWolve(sender), 0,
-												NOTICE, null));
+								this.sendNotice(sender, getFromFile("WS-ROLE", players2.getOtherWolve(sender), 0, NOTICE, null));
 							}
 						} else if (players2.isSeer(sender)) {
-							this.sendNotice(sender,
-									getFromFile("S-ROLE", null, 0, NOTICE, null));
+							this.sendNotice(sender, getFromFile("S-ROLE", NOTICE));
 						}
 					} else {
-						this.sendNotice(sender,
-								getFromFile("V-ROLE", null, 0, NOTICE, null));
+						this.sendNotice(sender, getFromFile("V-ROLE", NOTICE));
 					}
 				}
 			}
@@ -521,22 +525,17 @@ public class Werewolf extends PircBot {
 
 					votes2.addVote(sender, target);
 
-					this.sendMessage(
-							gameChan,
-							getFromFile("HAS-VOTED", players2.get(sender),
-									players2.get(target), 0, NARRATION, null));
+					this.sendMessage(gameChan,
+							getFromFile("HAS-VOTED", players2.get(sender), players2.get(target), NARRATION));
 
 				} else
-					this.sendNotice(sender,
-							"Your choice is not playing in the current game. Please select someone else.");
+					this.sendNotice(sender, "Your choice is not playing in the current game. Please select someone else.");
 			} catch (Exception x) {
-				this.sendNotice(sender, "Please vote in the correct format: /msg "
-						+ this.getName() + " vote <player>");
+				this.sendNotice(sender, "Please vote in the correct format: /msg " + this.getName() + " vote <player>");
 				x.printStackTrace();
 			}
 		} else
-			this.sendNotice(sender,
-					"You have already voted. You may not vote again until tomorrow.");
+			this.sendNotice(sender, "You have already voted. You may not vote again until tomorrow.");
 
 	}
 
@@ -551,9 +550,8 @@ public class Werewolf extends PircBot {
 	private void joinGame(String sender) {
 		if (status != GameStatus.PRE && status != GameStatus.IDLE) {
 			// if the game is already running, dont add anyone else to either list
-			this.sendNotice2(sender,
-					"The game is currently underway. Please wait for "
-							+ "the current game to finish before trying again.");
+			this.sendNotice2(sender, "The game is currently underway. Please wait for "
+					+ "the current game to finish before trying again.");
 			return;
 		}
 		// TODO: uncomment
@@ -562,9 +560,7 @@ public class Werewolf extends PircBot {
 		// }
 		if (players2.isAdded(sender)) // has the player already joined?
 		{
-			this.sendNotice2(
-					sender,
-					"You are already on the player list. Please wait for the next game to join again.");
+			this.sendNotice2(sender, "You are already on the player list. Please wait for the next game to join again.");
 			return;
 		}
 		if (players2.numPlayers() < MAXPLAYERS) {
@@ -572,47 +568,39 @@ public class Werewolf extends PircBot {
 			if (players2.addPlayer(sender)) // add another one
 			{
 				this.setMode(gameChan, "+v " + sender);
-				this.sendMessage(gameChan,
-						getFromFile("JOIN", sender, 0, NARRATION, null));
-				this.sendNotice2(sender, getFromFile("ADDED", null, 0, NOTICE, null));
+				this.sendMessage(gameChan, getFromFile("JOIN", sender, NARRATION));
+				this.sendNotice2(sender, getFromFile("ADDED", NOTICE));
 			} else {
 				// let the user know the adding failed, so he can try again
-				this.sendNotice2(sender,
-						"Could not add you to player list. Please try again.");
+				this.sendNotice2(sender, "Could not add you to player list. Please try again.");
 			}
 		} else {
 			// if play list is full, add to priority list
 			if (players2.numPriority() < MAXPLAYERS) {
 				if (players2.addPriority(sender)) {
-					this.sendNotice2(sender,
-							"Sorry, the maximum players has been reached. You have been placed in the "
-									+ "priority list for the next game.");
+					this.sendNotice2(sender, "Sorry, the maximum players has been reached. You have been placed in the "
+							+ "priority list for the next game.");
 				} else {
-					this.sendNotice2(sender,
-							"Could not add you to priority list. Please try again.");
+					this.sendNotice2(sender, "Could not add you to priority list. Please try again.");
 				}
 			} else {
 				// if both lists are full, let the user know to wait for the current
 				// game to end
-				this.sendNotice2(sender,
-						"Sorry, both player and priority lists are full. Please wait for the "
-								+ "the current game to finish before trying again.");
+				this.sendNotice2(sender, "Sorry, both player and priority lists are full. Please wait for the "
+						+ "the current game to finish before trying again.");
 			}
 		}
 	}
 
 	@Override
-	protected void onMessage(String channel, String sender, String login,
-			String hostname, String message) {
+	protected void onMessage(String channel, String sender, String login, String hostname, String message) {
 		if (message.toLowerCase().startsWith("!quit")) {
 			if (isSenderOp(sender)) {
 				if (status != GameStatus.IDLE)
 					doVoice(false);
 				this.setMode(gameChan, "-m");
-				this.partChannel(
-						gameChan,
-						"Werewolf Game Bot created by LLamaBoy."
-								+ " Texts by Darkshine. Based on the PircBot at http://www.jibble.org/");
+				this.partChannel(gameChan, "Werewolf Game Bot created by LLamaBoy."
+						+ " Texts by Darkshine. Based on the PircBot at http://www.jibble.org/");
 				this.sendMessage(sender, "Now quitting...");
 				this.quitServer();
 				System.out.println("Normal shutdown complete");
@@ -650,19 +638,16 @@ public class Werewolf extends PircBot {
 			{
 				if (isSenderOp(sender)) {
 					try {
-						int time = (Integer.parseInt(message.substring(
-								message.indexOf(" ") + 1, message.length())));
+						int time = (Integer.parseInt(message.substring(message.indexOf(" ") + 1, message.length())));
 						if (time > 0) {
 							dayTime = time;
-							this.sendMessage(gameChan,
-									this.getFromFile("DAYCHANGE", null, time, CONTROL, null));
+							this.sendMessage(gameChan, this.getFromFile("DAYCHANGE", time, CONTROL));
 							// "Duration of the day now set to " + Colors.DARK_GREEN +
 							// Colors.UNDERLINE + dayTime + Colors.NORMAL + " seconds");
 						} else
 							throw new Exception();
 					} catch (Exception x) {
-						this.sendMessage(
-								gameChan,
+						this.sendMessage(gameChan,
 								"Please provide a valid value for the daytime length (!daytime <TIME IN SECONDS>)");
 					}
 				}
@@ -671,17 +656,14 @@ public class Werewolf extends PircBot {
 			{
 				if (isSenderOp(sender)) {
 					try {
-						int time = (Integer.parseInt(message.substring(
-								message.indexOf(" ") + 1, message.length())));
+						int time = (Integer.parseInt(message.substring(message.indexOf(" ") + 1, message.length())));
 						if (time > 0) {
 							nightTime = time;
-							this.sendMessage(gameChan,
-									this.getFromFile("NIGHTCHANGE", null, time, CONTROL, null));
+							this.sendMessage(gameChan, this.getFromFile("NIGHTCHANGE", time, CONTROL));
 						} else
 							throw new Exception();
 					} catch (Exception x) {
-						this.sendMessage(
-								gameChan,
+						this.sendMessage(gameChan,
 								"Please provide a valid value for the night time length (!nighttime <TIME IN SECONDS>)");
 					}
 				}
@@ -689,17 +671,14 @@ public class Werewolf extends PircBot {
 			{
 				if (isSenderOp(sender)) {
 					try {
-						int time = (Integer.parseInt(message.substring(
-								message.indexOf(" ") + 1, message.length())));
+						int time = (Integer.parseInt(message.substring(message.indexOf(" ") + 1, message.length())));
 						if (time > 0) {
 							voteTime = time;
-							this.sendMessage(gameChan,
-									this.getFromFile("VOTECHANGE", null, time, CONTROL, null));
+							this.sendMessage(gameChan, this.getFromFile("VOTECHANGE", time, CONTROL));
 						} else
 							throw new Exception();
 					} catch (Exception x) {
-						this.sendMessage(
-								gameChan,
+						this.sendMessage(gameChan,
 								"Please provide a valid value for the Lynch Vote time length (!votetime <TIME IN SECONDS>)");
 					}
 				}
@@ -707,21 +686,17 @@ public class Werewolf extends PircBot {
 			{
 				if (isSenderOp(sender)) {
 					try {
-						String tie = message.substring(message.indexOf(" ") + 1,
-								message.length());
+						String tie = message.substring(message.indexOf(" ") + 1, message.length());
 						if (tie.equalsIgnoreCase("on")) {
 							tieGame = true;
-							this.sendMessage(gameChan, Colors.DARK_GREEN
-									+ "Vote tie activated");
+							this.sendMessage(gameChan, Colors.DARK_GREEN + "Vote tie activated");
 						} else if (tie.equalsIgnoreCase("off")) {
 							tieGame = false;
-							this.sendMessage(gameChan, Colors.DARK_GREEN
-									+ "Vote tie deactivated");
+							this.sendMessage(gameChan, Colors.DARK_GREEN + "Vote tie deactivated");
 						} else
 							throw new Exception();
 					} catch (Exception x) {
-						this.sendMessage(gameChan,
-								"Please provide a valid value for the vote tie condition (!tie ON/OFF)");
+						this.sendMessage(gameChan, "Please provide a valid value for the vote tie condition (!tie ON/OFF)");
 					}
 				}
 			} else if (message.startsWith("!shush")) // stop idle barks
@@ -731,11 +706,9 @@ public class Werewolf extends PircBot {
 						doBarks = false;
 						idleTimer.cancel();
 						idleTimer = null;
-						this.sendMessage(gameChan, Colors.DARK_GREEN
-								+ "I won't speak any more.");
+						this.sendMessage(gameChan, Colors.DARK_GREEN + "I won't speak any more.");
 					} else
-						this.sendMessage(gameChan, Colors.DARK_GREEN
-								+ "I'm already silent. Moron.");
+						this.sendMessage(gameChan, Colors.DARK_GREEN + "I'm already silent. Moron.");
 				}
 			} else if (message.startsWith("!speak")) // enable idle barks
 			{
@@ -745,28 +718,21 @@ public class Werewolf extends PircBot {
 						startIdle();
 						this.sendMessage(gameChan, Colors.DARK_GREEN + "Speakage: on.");
 					} else
-						this.sendMessage(gameChan, Colors.DARK_GREEN
-								+ "I'm already speaking and stuff. kthx");
+						this.sendMessage(gameChan, Colors.DARK_GREEN + "I'm already speaking and stuff. kthx");
 				}
 			} else if (message.startsWith("!daytime"))
-				this.sendMessage(gameChan, Colors.DARK_GREEN + "Day length is "
-						+ dayTime + " seconds.");
+				this.sendMessage(gameChan, Colors.DARK_GREEN + "Day length is " + dayTime + " seconds.");
 			else if (message.startsWith("!nighttime"))
-				this.sendMessage(gameChan, Colors.DARK_GREEN + "Night length is "
-						+ nightTime + " seconds.");
+				this.sendMessage(gameChan, Colors.DARK_GREEN + "Night length is " + nightTime + " seconds.");
 			else if (message.startsWith("!votetime"))
-				this.sendMessage(gameChan, Colors.DARK_GREEN + "Lynch Vote length is "
-						+ voteTime + " seconds.");
+				this.sendMessage(gameChan, Colors.DARK_GREEN + "Lynch Vote length is " + voteTime + " seconds.");
 			else if (message.startsWith("!tie"))
-				this.sendMessage(gameChan, Colors.DARK_GREEN + "Lynch vote tie is "
-						+ (tieGame ? "on." : "off."));
-		} else if (message.indexOf("it") != -1
-				&& message.indexOf(this.getNick()) != -1 && (status == GameStatus.DAY)
+				this.sendMessage(gameChan, Colors.DARK_GREEN + "Lynch vote tie is " + (tieGame ? "on." : "off."));
+		} else if (message.indexOf("it") != -1 && message.indexOf(this.getNick()) != -1 && (status == GameStatus.DAY)
 				&& message.indexOf("it") < message.indexOf(this.getNick()))
 		// when it looks like the bot is accused, send a reply
 		{
-			this.sendMessage(gameChan, "Hey, screw you, " + sender
-					+ "! I didn't kill anyone!");
+			this.sendMessage(gameChan, "Hey, screw you, " + sender + "! I didn't kill anyone!");
 		} else {
 			if (status != GameStatus.IDLE) {
 				if (status != GameStatus.PRE) {
@@ -800,8 +766,7 @@ public class Werewolf extends PircBot {
 	}
 
 	@Override
-	protected void onAction(String sender, String login, String hostname,
-			String target, String action) {
+	protected void onAction(String sender, String login, String hostname, String target, String action) {
 		if (status != GameStatus.IDLE) {
 			if (status != GameStatus.PRE) {
 				if (players2.isDead(players2.getPlayerNumber(sender)))
@@ -826,17 +791,15 @@ public class Werewolf extends PircBot {
 	// if the player changed their nick and they're in the game, changed the
 	// listed name
 	@Override
-	protected void onNickChange(String oldNick, String login, String hostname,
-			String newNick) {
+	protected void onNickChange(String oldNick, String login, String hostname, String newNick) {
 		if (players2.changeNick(oldNick, newNick)) {
 			if (players2.isPlaying(oldNick)) {
 				if (!players2.isDead(oldNick)) {
-					this.sendMessage(gameChan, Colors.DARK_GREEN + oldNick
-							+ " has changed nick to " + newNick + "; Player list updated.");
+					this.sendMessage(gameChan, Colors.DARK_GREEN + oldNick + " has changed nick to " + newNick
+							+ "; Player list updated.");
 				}
 			} else if (players2.isAdded(oldNick)) {
-				this.sendMessage(gameChan, Colors.DARK_GREEN + newNick
-						+ " has changed nick; Priority list updated.");
+				this.sendMessage(gameChan, Colors.DARK_GREEN + newNick + " has changed nick; Priority list updated.");
 			}
 		}
 	}
@@ -845,8 +808,7 @@ public class Werewolf extends PircBot {
 	// and if there is a priority list, add the first person from that in his
 	// place.
 	@Override
-	protected void onPart(String channel, String aSender, String login,
-			String hostname) {
+	protected void onPart(String channel, String aSender, String login, String hostname) {
 		if (status != GameStatus.IDLE) {
 			int sender = players2.getPlayerNumber(aSender);
 			if (sender != -1) {
@@ -854,50 +816,36 @@ public class Werewolf extends PircBot {
 					players2.replace(sender);
 					String newPlayer = players2.get(sender);
 
-					this.sendNotice2(newPlayer,
-							getFromFile("FLEE-PRIORITY-NOTICE", aSender, 0, NOTICE, null));
-					this.sendMessage(
-							gameChan,
-							getFromFile("FLEE-PRIORITY", aSender, newPlayer, 0, CONTROL, null));
+					this.sendNotice2(newPlayer, getFromFile("FLEE-PRIORITY-NOTICE", aSender, NOTICE));
+					this.sendMessage(gameChan, getFromFile("FLEE-PRIORITY", aSender, newPlayer, CONTROL));
 
 					if (status == GameStatus.DAY || status == GameStatus.VOTE) {
 						this.voice(gameChan, newPlayer);
 					}
 
 					if (players2.isSeer(sender)) {
-						this.sendNotice2(newPlayer,
-								getFromFile("S-ROLE", null, 0, NOTICE, null));
+						this.sendNotice2(newPlayer, getFromFile("S-ROLE", NOTICE));
 					} else if (players2.isWolf(sender)) {
 						if (players2.numWolves() == 1) {
-							this.sendNotice2(newPlayer,
-									getFromFile("W-ROLE", null, 0, NOTICE, null));
+							this.sendNotice2(newPlayer, getFromFile("W-ROLE", NOTICE));
 						} else {
 							for (int j = 0; j < players2.numWolves(); j++) {
 								String wolve = players2.getWolveName(j);
-								this.sendNotice2(wolve,
-										getFromFile("WS-ROLE", wolve, 0, NOTICE, null));
+								this.sendNotice2(wolve, getFromFile("WS-ROLE", wolve, NOTICE));
 							}
 						}
 					} else {
-						this.sendNotice2(newPlayer,
-								getFromFile("V-ROLE", null, 0, NOTICE, null));
+						this.sendNotice2(newPlayer, getFromFile("V-ROLE", NOTICE));
 					}
 				} else if (status == GameStatus.PRE) {
 					players2.remove(sender);
-					this.sendMessage(gameChan,
-							getFromFile("FLEE", players2.get(sender), 0, NARRATION, null));
+					this.sendMessage(gameChan, getFromFile("FLEE", players2.get(sender), 0, NARRATION, null));
 				} else {
 					if (!players2.isDead(sender)) {
 						if (players2.isWolf(sender)) {
-							this.sendMessage(
-									gameChan,
-									getFromFile("FLEE-WOLF", players2.get(sender), 0, NARRATION,
-											null));
+							this.sendMessage(gameChan, getFromFile("FLEE-WOLF", players2.get(sender), 0, NARRATION, null));
 						} else {
-							this.sendMessage(
-									gameChan,
-									getFromFile("FLEE-VILLAGER", players2.get(sender), 0,
-											NARRATION, null));
+							this.sendMessage(gameChan, getFromFile("FLEE-VILLAGER", players2.get(sender), 0, NARRATION, null));
 						}
 
 						players2.kill(sender);
@@ -916,24 +864,20 @@ public class Werewolf extends PircBot {
 			}
 		}
 		if (players2.removePriority(aSender)) {
-			this.sendMessage(gameChan, Colors.DARK_GREEN + Colors.UNDERLINE + aSender
-					+ Colors.NORMAL + Colors.DARK_GREEN
+			this.sendMessage(gameChan, Colors.DARK_GREEN + Colors.UNDERLINE + aSender + Colors.NORMAL + Colors.DARK_GREEN
 					+ ", a player on the priority list, has left. Removing from list...");
 		}
 	}
 
 	@Override
-	protected void onTopic(String channel, String topic, String setBy, long date,
-			boolean changed) {
+	protected void onTopic(String channel, String topic, String setBy, long date, boolean changed) {
 		if (status != GameStatus.IDLE) {
-			this.sendMessage(gameChan,
-					"Hey! Can't you see we're trying to play a game here? >:(");
+			this.sendMessage(gameChan, "Hey! Can't you see we're trying to play a game here? >:(");
 		}
 	}
 
 	@Override
-	protected void onQuit(String sourceNick, String sourceLogin,
-			String sourceHostname, String reason) {
+	protected void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason) {
 		this.onPart(gameChan, sourceNick, sourceLogin, sourceHostname);
 	}
 
@@ -975,14 +919,13 @@ public class Werewolf extends PircBot {
 		if (doBarks) {
 			idleTimer = new Timer();
 			// trigger a chat every 60-240 mins
-			idleTimer.schedule(new WereTask(),
-					((int) (Math.random() * 7200) + 3600) * 1000);
+			idleTimer.schedule(new WereTask(), ((int) (Math.random() * 7200) + 3600) * 1000);
 		}
 	}
 
 	@Override
-	protected void onKick(String channel, String kickerNick, String kickerLogin,
-			String kickerHostname, String recipientNick, String reason) {
+	protected void onKick(String channel, String kickerNick, String kickerLogin, String kickerHostname,
+			String recipientNick, String reason) {
 		if (recipientNick.equals(this.getName()))
 			this.joinChannel(channel);
 		else
@@ -990,15 +933,12 @@ public class Werewolf extends PircBot {
 	}
 
 	@Override
-	protected void onJoin(String channel, String sender, String login,
-			String hostname) {
+	protected void onJoin(String channel, String sender, String login, String hostname) {
 		if (!sender.equals(this.getNick())) {
 			if (status == GameStatus.PRE)
-				this.sendNotice2(sender,
-						getFromFile("GAME-STARTED", null, 0, NOTICE, null));
+				this.sendNotice2(sender, getFromFile("GAME-STARTED", null, 0, NOTICE, null));
 			else if (status != GameStatus.IDLE)
-				this.sendNotice2(sender,
-						getFromFile("GAME-PLAYING", null, 0, NOTICE, null));
+				this.sendNotice2(sender, getFromFile("GAME-PLAYING", null, 0, NOTICE, null));
 		}
 	}
 
@@ -1015,19 +955,16 @@ public class Werewolf extends PircBot {
 		players2.start(MAXPLAYERS);
 		for (int i = 0; i < players2.numPlayers(); i++) {
 			this.voice(gameChan, players2.get(i));
-			this.sendMessage(gameChan,
-					getFromFile("JOIN", sender, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("JOIN", sender, 0, NARRATION, null));
 		}
 
 		status = GameStatus.PRE;
 		firstNight = true;
 		toSee = -1;
 
-		this.sendMessage(gameChan,
-				getFromFile("STARTGAME", sender, joinTime, NARRATION, null));
+		this.sendMessage(gameChan, getFromFile("STARTGAME", sender, joinTime, NARRATION, null));
 
-		this.sendNotice2(gameChan,
-				getFromFile("STARTGAME-NOTICE", sender, 0, NOTICE, null));
+		this.sendNotice2(gameChan, getFromFile("STARTGAME-NOTICE", sender, 0, NOTICE, null));
 
 		waitForOutgoingQueueSizeIsZero();
 
@@ -1040,23 +977,18 @@ public class Werewolf extends PircBot {
 
 		if (firstNight) {
 			firstNight = false;
-			this.sendMessage(gameChan,
-					getFromFile("FIRSTNIGHT", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("FIRSTNIGHT", null, 0, NARRATION, null));
 		} else {
-			this.sendMessage(gameChan,
-					Colors.DARK_BLUE + getFromFile("NIGHTTIME", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("NIGHTTIME", null, 0, NARRATION, null));
 		}
 		if (players2.numWolves() == 1) {
-			this.sendMessage(gameChan,
-					getFromFile("WOLF-INSTRUCTIONS", null, nightTime, GAME, null));
+			this.sendMessage(gameChan, getFromFile("WOLF-INSTRUCTIONS", null, nightTime, GAME, null));
 		} else {
-			this.sendMessage(gameChan,
-					getFromFile("WOLVES-INSTRUCTIONS", null, nightTime, GAME, null));
+			this.sendMessage(gameChan, getFromFile("WOLVES-INSTRUCTIONS", null, nightTime, GAME, null));
 		}
 
 		if (!players2.isSeerDead()) {
-			this.sendMessage(gameChan,
-					getFromFile("SEER-INSTRUCTIONS", null, nightTime, GAME, null));
+			this.sendMessage(gameChan, getFromFile("SEER-INSTRUCTIONS", null, nightTime, GAME, null));
 		}
 
 		waitForOutgoingQueueSizeIsZero();
@@ -1076,30 +1008,24 @@ public class Werewolf extends PircBot {
 		String role;
 		if (toSee != -1) {
 			if (players2.isSeerDead()) {
-				this.sendNotice(
-						players2.getSeer(),
-						getFromFile("SEER-SEE-KILLED", players2.get(toSee), 0, NOTICE, null));
+				this.sendNotice(players2.getSeer(), getFromFile("SEER-SEE-KILLED", players2.get(toSee), 0, NOTICE, null));
 			} else {
 				if (players2.isDead(toSee)) {
-					this.sendNotice(
-							players2.getSeer(),
-							getFromFile("SEER-SEE-TARGET-KILLED", players2.get(toSee), 0,
-									NOTICE, null));
+					this.sendNotice(players2.getSeer(),
+							getFromFile("SEER-SEE-TARGET-KILLED", players2.get(toSee), 0, NOTICE, null));
 				} else {
 					if (players2.isWolf(toSee)) {
 						role = getFromFile("ROLE-WOLF", null, 0, NOTICE, null);
 					} else {
 						role = getFromFile("ROLE-VILLAGER", null, 0, NOTICE, null);
 					}
-					this.sendNotice(players2.getSeer(),
-							getFromFile("SEER-SEE", players2.get(toSee), toSee, NOTICE, role));
+					this.sendNotice(players2.getSeer(), getFromFile("SEER-SEE", players2.get(toSee), toSee, NOTICE, role));
 				}
 			}
 		}
 
 		doVoice(true);
-		this.sendMessage(gameChan,
-				getFromFile("DAYTIME", null, dayTime, GAME, null));
+		this.sendMessage(gameChan, getFromFile("DAYTIME", null, dayTime, GAME, null));
 		waitForOutgoingQueueSizeIsZero();
 
 		gameTimer.schedule(new WereTask(), dayTime * 1000);
@@ -1111,10 +1037,8 @@ public class Werewolf extends PircBot {
 			if (!players2.isDead(player)) {
 				players2.kill(player);
 
-				this.sendMessage(gameChan,
-						getFromFile("NOT-VOTED", players2.get(player), 0, NARRATION, null));
-				this.sendNotice2(players2.get(player),
-						getFromFile("NOT-VOTED-NOTICE", null, 0, NOTICE, null));
+				this.sendMessage(gameChan, getFromFile("NOT-VOTED", players2.get(player), 0, NARRATION, null));
+				this.sendNotice2(players2.get(player), getFromFile("NOT-VOTED-NOTICE", null, 0, NOTICE, null));
 
 				this.setMode(gameChan, "-v " + players2.get(player));
 
@@ -1124,8 +1048,7 @@ public class Werewolf extends PircBot {
 		if (checkWin())
 			return;
 
-		this.sendMessage(gameChan,
-				getFromFile("VOTETIME", null, voteTime, GAME, null));
+		this.sendMessage(gameChan, getFromFile("VOTETIME", null, voteTime, GAME, null));
 
 		waitForOutgoingQueueSizeIsZero();
 
@@ -1191,8 +1114,7 @@ public class Werewolf extends PircBot {
 		this.sendMessage(gameChan, getFromFile("TALLY", null, 0, CONTROL, null));
 		Vector<Integer> targets = votes2.getTarget();
 		if (targets.size() == 0) {
-			this.sendMessage(gameChan,
-					getFromFile("NO-VOTES", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("NO-VOTES", null, 0, NARRATION, null));
 			return -1;
 		} else if (targets.size() == 1) {
 			return targets.get(0);
@@ -1201,8 +1123,7 @@ public class Werewolf extends PircBot {
 			int rand = (int) (Math.random() * targets.size());
 			return targets.get(rand);
 		} else {
-			this.sendMessage(gameChan,
-					Colors.DARK_BLUE + getFromFile("NO-LYNCH", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("NO-LYNCH", null, 0, NARRATION, null));
 			return -1;
 		}
 	}
@@ -1216,41 +1137,34 @@ public class Werewolf extends PircBot {
 		players2.kill(guilty);
 
 		if (!isInChannel(guiltyStr)) {
-			this.sendMessage(gameChan,
-					getFromFile("LYNCH-LEFT", null, 0, CONTROL, null));
+			this.sendMessage(gameChan, getFromFile("LYNCH-LEFT", null, 0, CONTROL, null));
 			return;
 		}
 
 		String role;
 		if (players2.isSeer(guilty)) {
-			this.sendMessage(gameChan,
-					getFromFile("SEER-LYNCH", guiltyStr, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("SEER-LYNCH", guiltyStr, 0, NARRATION, null));
 			role = getFromFile("ROLE-SEER", null, 0, NARRATION, null);
 		} else if (players2.isWolf(guilty)) {
-			this.sendMessage(gameChan,
-					getFromFile("WOLF-LYNCH", guiltyStr, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("WOLF-LYNCH", guiltyStr, 0, NARRATION, null));
 			role = getFromFile("ROLE-WOLF", null, 0, NARRATION, null);
 		} else {
-			this.sendMessage(gameChan,
-					getFromFile("VILLAGER-LYNCH", guiltyStr, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("VILLAGER-LYNCH", guiltyStr, 0, NARRATION, null));
 			role = getFromFile("ROLE-VILLAGER", null, 0, NARRATION, null);
 		}
-		this.sendMessage(gameChan,
-				getFromFile("IS-LYNCHED", guiltyStr, 0, NARRATION, role));
+		this.sendMessage(gameChan, getFromFile("IS-LYNCHED", guiltyStr, 0, NARRATION, role));
 
 		if (players2.isSeer(guilty) || players2.isWolf(guilty)) {
 			this.deVoice(gameChan, guiltyStr);
 		} else {
-			this.sendNotice2(guiltyStr,
-					getFromFile("DYING-BREATH", null, 0, NOTICE, null));
+			this.sendNotice2(guiltyStr, getFromFile("DYING-BREATH", null, 0, NOTICE, null));
 		}
 	}
 
 	protected void wolfKill() {
 		Vector<Integer> targets = wolfVictim2.getTarget();
 		if (targets.size() == 0) {
-			this.sendMessage(gameChan,
-					getFromFile("NO-KILL", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("NO-KILL", null, 0, NARRATION, null));
 			return;
 		}
 		int target;
@@ -1263,20 +1177,14 @@ public class Werewolf extends PircBot {
 		players2.kill(target); // make the player dead
 		String role;
 		if (players2.isSeer(target)) {
-			this.sendMessage(gameChan,
-					getFromFile("SEER-KILL", players2.get(target), 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("SEER-KILL", players2.get(target), 0, NARRATION, null));
 			role = getFromFile("ROLE-SEER", null, 0, NOTICE, null);
 		} else {
-			this.sendMessage(
-					gameChan,
-					getFromFile("VILLAGER-KILL", players2.get(target), 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("VILLAGER-KILL", players2.get(target), 0, NARRATION, null));
 			role = getFromFile("ROLE-VILLAGER", null, 0, NOTICE, null);
 		}
 
-		this.sendMessage(
-				gameChan,
-				Colors.DARK_BLUE
-						+ getFromFile("IS-KILLED", players2.get(target), 0, NARRATION, role));
+		this.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("IS-KILLED", players2.get(target), 0, NARRATION, role));
 
 		this.setMode(gameChan, "-v " + players2.get(target));
 	}
@@ -1289,22 +1197,17 @@ public class Werewolf extends PircBot {
 		} else // otherwise, 2 wolves, and they know each other
 		{
 			players2.setRoles(2, 1);
-			this.sendMessage(gameChan,
-					getFromFile("TWOWOLVES", null, 0, CONTROL, null));
+			this.sendMessage(gameChan, getFromFile("TWOWOLVES", null, 0, CONTROL, null));
 		}
 
 		for (int i = 0; i < players2.numPlayers(); i++) {
 			if (players2.isSeer(i)) {
-				this.sendNotice2(players2.get(i),
-						getFromFile("SEER-ROLE", null, 0, NOTICE, null));
+				this.sendNotice2(players2.get(i), getFromFile("SEER-ROLE", null, 0, NOTICE, null));
 			} else if (players2.isWolf(i)) {
 				if (players2.numWolves() == 1) {
 					this.sendNotice(i, getFromFile("WOLF-ROLE", null, 0, NOTICE, null));
 				} else {
-					this.sendNotice(
-							i,
-							getFromFile("WOLVES-ROLE", players2.getOtherWolve(i), 0, NOTICE,
-									null));
+					this.sendNotice(i, getFromFile("WOLVES-ROLE", players2.getOtherWolve(i), 0, NOTICE, null));
 				}
 			} else {
 				this.sendNotice(i, getFromFile("VILLAGER-ROLE", null, 0, NOTICE, null));
@@ -1315,32 +1218,17 @@ public class Werewolf extends PircBot {
 	protected boolean checkWin() {
 		if (players2.numWolves() == 0) // humans win
 		{
-			this.sendMessage(gameChan,
-					getFromFile("VILLAGERS-WIN", null, 0, NARRATION, null));
-			this.sendMessage(gameChan,
-					getFromFile("CONGR-VILL", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("VILLAGERS-WIN", null, 0, NARRATION, null));
+			this.sendMessage(gameChan, getFromFile("CONGR-VILL", null, 0, NARRATION, null));
 		} else if (players2.numWolves() * 2 >= players2.numAlive()) // wolves win
 		{
 			if (players2.numWolves() < 1) {
-				this.sendMessage(
-						gameChan,
-						getFromFile("WOLF-WIN", players2.getWolveName(0), 0, NARRATION,
-								null));
-				this.sendMessage(
-						gameChan,
-						getFromFile("CONGR-WOLF", players2.getWolveName(0), 0, NARRATION,
-								null));
+				this.sendMessage(gameChan, getFromFile("WOLF-WIN", players2.getWolveName(0), 0, NARRATION, null));
+				this.sendMessage(gameChan, getFromFile("CONGR-WOLF", players2.getWolveName(0), 0, NARRATION, null));
 			} else {
-				this.sendMessage(
-						gameChan,
-						Colors.DARK_BLUE
-								+ getFromFile("WOLVES-WIN", null, 0, NARRATION, null));
-				this.sendMessage(gameChan,
-						getFromFile("CONGR-WOLVES", null, 0, NARRATION, null));
-				this.sendMessage(
-						gameChan,
-						getFromFile("WOLVES-WERE", null, 0, CONTROL, null)
-								+ players2.getWolves());
+				this.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("WOLVES-WIN", null, 0, NARRATION, null));
+				this.sendMessage(gameChan, getFromFile("CONGR-WOLVES", null, 0, NARRATION, null));
+				this.sendMessage(gameChan, getFromFile("WOLVES-WERE", null, 0, CONTROL, null) + players2.getWolves());
 			}
 		} else {
 			// No-one wins

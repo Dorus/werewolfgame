@@ -16,7 +16,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -84,12 +87,10 @@ public class Werewolf extends PircBot {
 
 		String filename = "werewolf.ini", lineRead = "";
 		gameFile = "wolfgame.txt";
-		FileReader reader;
 		BufferedReader buff;
 
 		try {
-			reader = new FileReader(filename);
-			buff = new BufferedReader(reader);
+			buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + filename)));
 
 			while (!lineRead.startsWith("botname"))
 				lineRead = buff.readLine();
@@ -249,46 +250,40 @@ public class Werewolf extends PircBot {
 		return getFromFile(text, null, null, time, type, null);
 	}
 
-	private String getFromFile(String text, String player, int time, int type) {
-		return getFromFile(text, player, null, time, type, null);
-	}
-
-	private String getFromFile(String text, int type, String role) {
-		return getFromFile(text, null, null, 0, type, role);
-	}
-
-	private String getFromFile(String text, String player, int type, String role) {
-		return getFromFile(text, player, null, 0, type, role);
-	}
-
-	private String getFromFile(String text, int time, int type, String role) {
-		return getFromFile(text, null, null, time, type, role);
-	}
-	
+	/*
+	 * private String getFromFile(String text, String player, int time, int type) { return getFromFile(text, player, null,
+	 * time, type, null); }
+	 * 
+	 * private String getFromFile(String text, int type, String role) { return getFromFile(text, null, null, 0, type,
+	 * role); }
+	 * 
+	 * private String getFromFile(String text, String player, int type, String role) { return getFromFile(text, player,
+	 * null, 0, type, role); }
+	 * 
+	 * private String getFromFile(String text, int time, int type, String role) { return getFromFile(text, null, null,
+	 * time, type, role); }
+	 */
 	private String getFromFile(String text, String player, String player2, int type) {
 		return getFromFile(text, player, player2, 0, type, null);
 	}
 
-	private String getFromFile(String text, String player, String player2, int time, int type) {
-		return getFromFile(text, player, player2, time, type, null);
-	}
-
-	private String getFromFile(String text, String player, String player2, int type, String role) {
-		return getFromFile(text, player, player2, 0, type, role);
-	}
-
+	/*
+	 * private String getFromFile(String text, String player, String player2, int time, int type) { return
+	 * getFromFile(text, player, player2, time, type, null); }
+	 * 
+	 * private String getFromFile(String text, String player, String player2, int type, String role) { return
+	 * getFromFile(text, player, player2, 0, type, role); }
+	 */
 	private String getFromFile(String text, String player, int time, int type, String role) {
 		return getFromFile(text, player, null, time, type, role);
 	}
 
 	// the ACTUAL method
 	protected String getFromFile(String text, String player, String player2, int time, int type, String role) {
-		FileReader reader;
 		BufferedReader buff;
 
 		try {
-			reader = new FileReader(gameFile);
-			buff = new BufferedReader(reader);
+			buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + gameFile)));
 			String lineRead = "";
 
 			while (!lineRead.equals(text)) {
@@ -304,7 +299,6 @@ public class Werewolf extends PircBot {
 			}
 
 			buff.close();
-			reader.close();
 
 			int rand = (int) (Math.random() * texts.size());
 			String toSend = texts.get(rand);
@@ -516,8 +510,7 @@ public class Werewolf extends PircBot {
 
 					votes2.addVote(sender, target);
 
-					this.sendMessage(gameChan,
-							getFromFile("HAS-VOTED", players2.get(sender), players2.get(target), NARRATION));
+					this.sendMessage(gameChan, getFromFile("HAS-VOTED", players2.get(sender), players2.get(target), NARRATION));
 
 				} else
 					this.sendNotice(sender, "Your choice is not playing in the current game. Please select someone else.");

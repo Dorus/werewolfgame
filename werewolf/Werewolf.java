@@ -235,62 +235,53 @@ public class Werewolf extends PircBot {
 		startIdle();
 	}
 
-	// overloaded method that calls the method with 2 player names
+	// overloaded methods with less parameters
+	// TODO: Turn this function inside out so we don't need 12 flavors
 	private String getFromFile(String text, int type) {
 		return getFromFile(text, null, null, 0, type, null);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, int type) {
 		return getFromFile(text, player, null, 0, type, null);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, int time, int type) {
 		return getFromFile(text, null, null, time, type, null);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, int time, int type) {
 		return getFromFile(text, player, null, time, type, null);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, int type, String role) {
 		return getFromFile(text, null, null, 0, type, role);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, int type, String role) {
 		return getFromFile(text, player, null, 0, type, role);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, int time, int type, String role) {
 		return getFromFile(text, null, null, time, type, role);
 	}
 	
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, String player2, int type) {
 		return getFromFile(text, player, player2, 0, type, null);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, String player2, int time, int type) {
 		return getFromFile(text, player, player2, time, type, null);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, String player2, int type, String role) {
 		return getFromFile(text, player, player2, 0, type, role);
 	}
 
-	// overloaded method that calls the method with 2 player names
 	private String getFromFile(String text, String player, int time, int type, String role) {
 		return getFromFile(text, player, null, time, type, role);
 	}
 
-	// a couple of game string need 2 player names, so this is the ACTUAL method
+	// the ACTUAL method
 	protected String getFromFile(String text, String player, String player2, int time, int type, String role) {
 		FileReader reader;
 		BufferedReader buff;

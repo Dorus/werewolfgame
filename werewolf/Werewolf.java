@@ -520,7 +520,7 @@ public class Werewolf implements IntBot {
 	}
 
 	private void sendNotice2(String sender, String notice2) {
-		bot.sendNotice("#werewolf2", sender + ": " + notice2);
+		bot.sendNotice(gameChan, sender + ": " + notice2);
 	}
 
 	private void sendNotice(int sender, String notice2) {
@@ -573,6 +573,9 @@ public class Werewolf implements IntBot {
 	}
 
 	public void onMessage(String channel, String sender, String login, String hostname, String message) {
+		if (!channel.equals(gameChan)) {
+			return;
+		}
 		if (message.toLowerCase().startsWith("!quit")) {
 			if (isSenderOp(sender)) {
 				if (status != GameStatus.IDLE)

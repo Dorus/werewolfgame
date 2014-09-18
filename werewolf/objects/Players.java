@@ -124,10 +124,10 @@ public class Players {
 	}
 
 	public boolean addPlayer(String player) {
-		alive++;
 		if (players.size() > Werewolf.MAXPLAYERS) {
 			return false;
 		}
+		alive++;
 		return players.add(player);
 	}
 

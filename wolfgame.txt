@@ -17,7 +17,7 @@ ROLE-VILLAGER
 Villager
 
 STARTGAME
-PLAYER has started a game. Everyone else has TIME seconds to join in the mob. '/msg BOTNAME join' to join the game.'
+PLAYER has started a game. Everyone else has TIME seconds to join in the mob. '/msg BOTNAME join' to join the game.
 
 STARTGAME-NOTICE
 PLAYER has started a game!

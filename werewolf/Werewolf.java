@@ -247,19 +247,24 @@ public class Werewolf implements IntBot {
 		return getFromFile(text, null, null, time, type, null);
 	}
 
+	private String getFromFile(String text, String player, int time, int type) {
+		return getFromFile(text, player, null, time, type, null);
+	}
+
 	/*
-	 * private String getFromFile(String text, String player, int time, int type) { return getFromFile(text, player, null,
-	 * time, type, null); }
-	 * 
 	 * private String getFromFile(String text, int type, String role) { return getFromFile(text, null, null, 0, type,
 	 * role); }
-	 * 
-	 * private String getFromFile(String text, String player, int type, String role) { return getFromFile(text, player,
-	 * null, 0, type, role); }
-	 * 
+	 */
+	
+	private String getFromFile(String text, String player, int type, String role) {
+		return getFromFile(text, player, null, 0, type, role);
+	}
+
+	/*
 	 * private String getFromFile(String text, int time, int type, String role) { return getFromFile(text, null, null,
 	 * time, type, role); }
 	 */
+	
 	private String getFromFile(String text, String player, String player2, int type) {
 		return getFromFile(text, player, player2, 0, type, null);
 	}
@@ -271,6 +276,7 @@ public class Werewolf implements IntBot {
 	 * private String getFromFile(String text, String player, String player2, int type, String role) { return
 	 * getFromFile(text, player, player2, 0, type, role); }
 	 */
+	
 	private String getFromFile(String text, String player, int time, int type, String role) {
 		return getFromFile(text, player, null, time, type, role);
 	}
@@ -477,7 +483,7 @@ public class Werewolf implements IntBot {
 							if (players2.numWolves() == 1)
 								this.sendNotice(sender, getFromFile("W-ROLE", NOTICE));
 							else {
-								this.sendNotice(sender, getFromFile("WS-ROLE", players2.getOtherWolve(sender), 0, NOTICE, null));
+								this.sendNotice(sender, getFromFile("WS-ROLE", players2.getOtherWolve(sender), NOTICE));
 							}
 						} else if (players2.isSeer(sender)) {
 							this.sendNotice(sender, getFromFile("S-ROLE", NOTICE));
@@ -606,15 +612,6 @@ public class Werewolf implements IntBot {
 			if (message.startsWith("!start")) // initiates a game.
 			{
 				startGame(sender);
-
-				// if (players2.addPlayer(sender)) {
-				// this.setMode(gameChan, "+v " + sender);
-				// sendNotice2(sender, getFromFile("ADDED", null, 0, NOTICE,
-				// null));
-				// } else
-				// sendNotice2(sender,
-				// "Could not add you to player list. Please try again." + " (/msg "
-				// + this.getName() + " join.");
 			} else if (message.startsWith("!daytime ")) // alter the duration of the
 																									// day
 			{
@@ -818,13 +815,13 @@ public class Werewolf implements IntBot {
 					}
 				} else if (status == GameStatus.PRE) {
 					players2.remove(sender);
-					bot.sendMessage(gameChan, getFromFile("FLEE", players2.get(sender), 0, NARRATION, null));
+					bot.sendMessage(gameChan, getFromFile("FLEE", players2.get(sender), NARRATION));
 				} else {
 					if (!players2.isDead(sender)) {
 						if (players2.isWolf(sender)) {
-							bot.sendMessage(gameChan, getFromFile("FLEE-WOLF", players2.get(sender), 0, NARRATION, null));
+							bot.sendMessage(gameChan, getFromFile("FLEE-WOLF", players2.get(sender), NARRATION));
 						} else {
-							bot.sendMessage(gameChan, getFromFile("FLEE-VILLAGER", players2.get(sender), 0, NARRATION, null));
+							bot.sendMessage(gameChan, getFromFile("FLEE-VILLAGER", players2.get(sender), NARRATION));
 						}
 
 						players2.kill(sender);
@@ -910,9 +907,9 @@ public class Werewolf implements IntBot {
 	public void onJoin(String channel, String sender, String login, String hostname) {
 		if (!sender.equals(bot.getNick())) {
 			if (status == GameStatus.PRE)
-				sendNotice2(sender, getFromFile("GAME-STARTED", null, 0, NOTICE, null));
+				sendNotice2(sender, getFromFile("GAME-STARTED", NOTICE));
 			else if (status != GameStatus.IDLE)
-				sendNotice2(sender, getFromFile("GAME-PLAYING", null, 0, NOTICE, null));
+				sendNotice2(sender, getFromFile("GAME-PLAYING", NOTICE));
 		}
 	}
 
@@ -929,16 +926,22 @@ public class Werewolf implements IntBot {
 		players2.start(MAXPLAYERS);
 		for (int i = 0; i < players2.numPlayers(); i++) {
 			bot.voice(gameChan, players2.get(i));
-			bot.sendMessage(gameChan, getFromFile("JOIN", sender, 0, NARRATION, null));
+			bot.sendMessage(gameChan, getFromFile("JOIN", sender, NARRATION));
 		}
 
 		status = GameStatus.PRE;
 		firstNight = true;
 		toSee = -1;
 
-		bot.sendMessage(gameChan, getFromFile("STARTGAME", sender, joinTime, NARRATION, null));
+		bot.sendMessage(gameChan, getFromFile("STARTGAME", sender, joinTime, NARRATION));
 
-		sendNotice2(gameChan, getFromFile("STARTGAME-NOTICE", sender, 0, NOTICE, null));
+		sendNotice2(gameChan, getFromFile("STARTGAME-NOTICE", sender, NOTICE));
+
+		if (players2.addPlayer(sender)) {
+			bot.setMode(gameChan, "+v " + sender);
+			sendNotice2(sender, getFromFile("ADDED", NOTICE));
+		} else
+			sendNotice2(sender, "Could not add you to player list. Please try again." + " (/msg " + bot.getName() + " join.");
 
 		waitForOutgoingQueueSizeIsZero();
 
@@ -951,18 +954,18 @@ public class Werewolf implements IntBot {
 
 		if (firstNight) {
 			firstNight = false;
-			bot.sendMessage(gameChan, getFromFile("FIRSTNIGHT", null, 0, NARRATION, null));
+			bot.sendMessage(gameChan, getFromFile("FIRSTNIGHT", NARRATION));
 		} else {
-			bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("NIGHTTIME", null, 0, NARRATION, null));
+			bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("NIGHTTIME", NARRATION));
 		}
 		if (players2.numWolves() == 1) {
-			bot.sendMessage(gameChan, getFromFile("WOLF-INSTRUCTIONS", null, nightTime, GAME, null));
+			bot.sendMessage(gameChan, getFromFile("WOLF-INSTRUCTIONS", nightTime, GAME));
 		} else {
-			bot.sendMessage(gameChan, getFromFile("WOLVES-INSTRUCTIONS", null, nightTime, GAME, null));
+			bot.sendMessage(gameChan, getFromFile("WOLVES-INSTRUCTIONS", nightTime, GAME));
 		}
 
 		if (!players2.isSeerDead()) {
-			bot.sendMessage(gameChan, getFromFile("SEER-INSTRUCTIONS", null, nightTime, GAME, null));
+			bot.sendMessage(gameChan, getFromFile("SEER-INSTRUCTIONS", nightTime, GAME));
 		}
 
 		waitForOutgoingQueueSizeIsZero();
@@ -982,16 +985,16 @@ public class Werewolf implements IntBot {
 		String role;
 		if (toSee != -1) {
 			if (players2.isSeerDead()) {
-				this.sendNotice(players2.getSeer(), getFromFile("SEER-SEE-KILLED", players2.get(toSee), 0, NOTICE, null));
+				this.sendNotice(players2.getSeer(), getFromFile("SEER-SEE-KILLED", players2.get(toSee), NOTICE));
 			} else {
 				if (players2.isDead(toSee)) {
 					this.sendNotice(players2.getSeer(),
-							getFromFile("SEER-SEE-TARGET-KILLED", players2.get(toSee), 0, NOTICE, null));
+							getFromFile("SEER-SEE-TARGET-KILLED", players2.get(toSee), NOTICE));
 				} else {
 					if (players2.isWolf(toSee)) {
-						role = getFromFile("ROLE-WOLF", null, 0, NOTICE, null);
+						role = getFromFile("ROLE-WOLF", NOTICE);
 					} else {
-						role = getFromFile("ROLE-VILLAGER", null, 0, NOTICE, null);
+						role = getFromFile("ROLE-VILLAGER", NOTICE);
 					}
 					this.sendNotice(players2.getSeer(), getFromFile("SEER-SEE", players2.get(toSee), toSee, NOTICE, role));
 				}
@@ -1011,8 +1014,8 @@ public class Werewolf implements IntBot {
 			if (!players2.isDead(player)) {
 				players2.kill(player);
 
-				bot.sendMessage(gameChan, getFromFile("NOT-VOTED", players2.get(player), 0, NARRATION, null));
-				sendNotice2(players2.get(player), getFromFile("NOT-VOTED-NOTICE", null, 0, NOTICE, null));
+				bot.sendMessage(gameChan, getFromFile("NOT-VOTED", players2.get(player), NARRATION));
+				sendNotice2(players2.get(player), getFromFile("NOT-VOTED-NOTICE", NOTICE));
 
 				bot.setMode(gameChan, "-v " + players2.get(player));
 
@@ -1063,7 +1066,7 @@ public class Werewolf implements IntBot {
 		}
 
 		bot.setMode(gameChan, modes + " " + nicks); // mode the stragglers that
-																									// dont make a full 4
+																								// dont make a full 4
 	}
 
 	/**
@@ -1085,19 +1088,19 @@ public class Werewolf implements IntBot {
 	}
 
 	private int tallyVotes() {
-		bot.sendMessage(gameChan, getFromFile("TALLY", null, 0, CONTROL, null));
+		bot.sendMessage(gameChan, getFromFile("TALLY", CONTROL));
 		Vector<Integer> targets = votes2.getTarget();
 		if (targets.size() == 0) {
-			bot.sendMessage(gameChan, getFromFile("NO-VOTES", null, 0, NARRATION, null));
+			bot.sendMessage(gameChan, getFromFile("NO-VOTES", NARRATION));
 			return -1;
 		} else if (targets.size() == 1) {
 			return targets.get(0);
 		} else if (tieGame) {
-			bot.sendMessage(gameChan, getFromFile("TIE", null, 0, CONTROL, null));
+			bot.sendMessage(gameChan, getFromFile("TIE", CONTROL));
 			int rand = (int) (Math.random() * targets.size());
 			return targets.get(rand);
 		} else {
-			bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("NO-LYNCH", null, 0, NARRATION, null));
+			bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("NO-LYNCH", NARRATION));
 			return -1;
 		}
 	}
@@ -1111,34 +1114,34 @@ public class Werewolf implements IntBot {
 		players2.kill(guilty);
 
 		if (!isInChannel(guiltyStr)) {
-			bot.sendMessage(gameChan, getFromFile("LYNCH-LEFT", null, 0, CONTROL, null));
+			bot.sendMessage(gameChan, getFromFile("LYNCH-LEFT", CONTROL));
 			return;
 		}
 
 		String role;
 		if (players2.isSeer(guilty)) {
-			bot.sendMessage(gameChan, getFromFile("SEER-LYNCH", guiltyStr, 0, NARRATION, null));
-			role = getFromFile("ROLE-SEER", null, 0, NARRATION, null);
+			bot.sendMessage(gameChan, getFromFile("SEER-LYNCH", guiltyStr, NARRATION));
+			role = getFromFile("ROLE-SEER", NARRATION);
 		} else if (players2.isWolf(guilty)) {
-			bot.sendMessage(gameChan, getFromFile("WOLF-LYNCH", guiltyStr, 0, NARRATION, null));
-			role = getFromFile("ROLE-WOLF", null, 0, NARRATION, null);
+			bot.sendMessage(gameChan, getFromFile("WOLF-LYNCH", guiltyStr, NARRATION));
+			role = getFromFile("ROLE-WOLF", NARRATION);
 		} else {
-			bot.sendMessage(gameChan, getFromFile("VILLAGER-LYNCH", guiltyStr, 0, NARRATION, null));
-			role = getFromFile("ROLE-VILLAGER", null, 0, NARRATION, null);
+			bot.sendMessage(gameChan, getFromFile("VILLAGER-LYNCH", guiltyStr, NARRATION));
+			role = getFromFile("ROLE-VILLAGER", NARRATION);
 		}
-		bot.sendMessage(gameChan, getFromFile("IS-LYNCHED", guiltyStr, 0, NARRATION, role));
+		bot.sendMessage(gameChan, getFromFile("IS-LYNCHED", guiltyStr, NARRATION, role));
 
 		if (players2.isSeer(guilty) || players2.isWolf(guilty)) {
 			bot.deVoice(gameChan, guiltyStr);
 		} else {
-			sendNotice2(guiltyStr, getFromFile("DYING-BREATH", null, 0, NOTICE, null));
+			sendNotice2(guiltyStr, getFromFile("DYING-BREATH", NOTICE));
 		}
 	}
 
 	protected void wolfKill() {
 		Vector<Integer> targets = wolfVictim2.getTarget();
 		if (targets.size() == 0) {
-			bot.sendMessage(gameChan, getFromFile("NO-KILL", null, 0, NARRATION, null));
+			bot.sendMessage(gameChan, getFromFile("NO-KILL", NARRATION));
 			return;
 		}
 		int target;
@@ -1151,14 +1154,14 @@ public class Werewolf implements IntBot {
 		players2.kill(target); // make the player dead
 		String role;
 		if (players2.isSeer(target)) {
-			bot.sendMessage(gameChan, getFromFile("SEER-KILL", players2.get(target), 0, NARRATION, null));
-			role = getFromFile("ROLE-SEER", null, 0, NOTICE, null);
+			bot.sendMessage(gameChan, getFromFile("SEER-KILL", players2.get(target), NARRATION));
+			role = getFromFile("ROLE-SEER", NOTICE);
 		} else {
-			bot.sendMessage(gameChan, getFromFile("VILLAGER-KILL", players2.get(target), 0, NARRATION, null));
-			role = getFromFile("ROLE-VILLAGER", null, 0, NOTICE, null);
+			bot.sendMessage(gameChan, getFromFile("VILLAGER-KILL", players2.get(target), NARRATION));
+			role = getFromFile("ROLE-VILLAGER", NOTICE);
 		}
 
-		bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("IS-KILLED", players2.get(target), 0, NARRATION, role));
+		bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("IS-KILLED", players2.get(target), NARRATION, role));
 
 		bot.setMode(gameChan, "-v " + players2.get(target));
 	}
@@ -1171,20 +1174,20 @@ public class Werewolf implements IntBot {
 		} else // otherwise, 2 wolves, and they know each other
 		{
 			players2.setRoles(2, 1);
-			bot.sendMessage(gameChan, getFromFile("TWOWOLVES", null, 0, CONTROL, null));
+			bot.sendMessage(gameChan, getFromFile("TWOWOLVES", CONTROL));
 		}
 
 		for (int i = 0; i < players2.numPlayers(); i++) {
 			if (players2.isSeer(i)) {
-				sendNotice2(players2.get(i), getFromFile("SEER-ROLE", null, 0, NOTICE, null));
+				sendNotice2(players2.get(i), getFromFile("SEER-ROLE", NOTICE));
 			} else if (players2.isWolf(i)) {
 				if (players2.numWolves() == 1) {
-					this.sendNotice(i, getFromFile("WOLF-ROLE", null, 0, NOTICE, null));
+					this.sendNotice(i, getFromFile("WOLF-ROLE", NOTICE));
 				} else {
-					this.sendNotice(i, getFromFile("WOLVES-ROLE", players2.getOtherWolve(i), 0, NOTICE, null));
+					this.sendNotice(i, getFromFile("WOLVES-ROLE", players2.getOtherWolve(i), NOTICE));
 				}
 			} else {
-				this.sendNotice(i, getFromFile("VILLAGER-ROLE", null, 0, NOTICE, null));
+				this.sendNotice(i, getFromFile("VILLAGER-ROLE", NOTICE));
 			}
 		}
 	}
@@ -1192,17 +1195,17 @@ public class Werewolf implements IntBot {
 	protected boolean checkWin() {
 		if (players2.numWolves() == 0) // humans win
 		{
-			bot.sendMessage(gameChan, getFromFile("VILLAGERS-WIN", null, 0, NARRATION, null));
-			bot.sendMessage(gameChan, getFromFile("CONGR-VILL", null, 0, NARRATION, null));
+			bot.sendMessage(gameChan, getFromFile("VILLAGERS-WIN", NARRATION));
+			bot.sendMessage(gameChan, getFromFile("CONGR-VILL", NARRATION));
 		} else if (players2.numWolves() * 2 >= players2.numAlive()) // wolves win
 		{
 			if (players2.numWolves() < 1) {
-				bot.sendMessage(gameChan, getFromFile("WOLF-WIN", players2.getWolveName(0), 0, NARRATION, null));
-				bot.sendMessage(gameChan, getFromFile("CONGR-WOLF", players2.getWolveName(0), 0, NARRATION, null));
+				bot.sendMessage(gameChan, getFromFile("WOLF-WIN", players2.getWolveName(0), NARRATION));
+				bot.sendMessage(gameChan, getFromFile("CONGR-WOLF", players2.getWolveName(0), NARRATION));
 			} else {
-				bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("WOLVES-WIN", null, 0, NARRATION, null));
-				bot.sendMessage(gameChan, getFromFile("CONGR-WOLVES", null, 0, NARRATION, null));
-				bot.sendMessage(gameChan, getFromFile("WOLVES-WERE", null, 0, CONTROL, null) + players2.getWolves());
+				bot.sendMessage(gameChan, Colors.DARK_BLUE + getFromFile("WOLVES-WIN", NARRATION));
+				bot.sendMessage(gameChan, getFromFile("CONGR-WOLVES", NARRATION));
+				bot.sendMessage(gameChan, getFromFile("WOLVES-WERE", CONTROL) + players2.getWolves());
 			}
 		} else {
 			// No-one wins
@@ -1242,7 +1245,7 @@ public class Werewolf implements IntBot {
 				rand = users[((int) (Math.random() * users.length))].getNick();
 			} while (rand.equals(bot.getNick()));
 
-			String msg = getFromFile("BORED", rand, 0, NOTICE, null);
+			String msg = getFromFile("BORED", rand, NOTICE);
 			if (msg != null)
 				bot.sendMessage(gameChan, msg);
 			startIdle();
@@ -1256,7 +1259,7 @@ public class Werewolf implements IntBot {
 				bot.setMode(gameChan, "-m");
 				doVoice(false);
 
-				bot.sendMessage(gameChan, getFromFile("NOT-ENOUGH", null, 0, CONTROL, null));
+				bot.sendMessage(gameChan, getFromFile("NOT-ENOUGH", CONTROL));
 				status = GameStatus.IDLE;
 				gameFile = "wolfgame.txt"; // reset the game file
 				startIdle();

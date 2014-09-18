@@ -123,6 +123,12 @@ public class Players {
 		return wolves.size();
 	}
 
+	/**
+	 * Tries to add the player to the player list. Succeed it not full yet.
+	 * 
+	 * @param Player the player name.
+	 * @return If player is added.
+	 */
 	public boolean addPlayer(String player) {
 		if (players.size() > Werewolf.MAXPLAYERS) {
 			return false;

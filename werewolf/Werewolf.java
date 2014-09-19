@@ -1050,7 +1050,7 @@ public class Werewolf implements IntBot {
 					modes += "v";
 					count++;
 					if (count % 4 == 0) {
-						bot.setMode(gameChan, modes + " " + nicks);
+						bot.setMode(gameChan, modes + " " + nicks.trim());
 						nicks = "";
 
 						if (on)

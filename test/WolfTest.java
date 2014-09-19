@@ -84,13 +84,21 @@ public class WolfTest {
 		timer.schedule(EasyMock.capture(wereTask), EasyMock.eq(90L * 1000L));
 	}
 
-	private void doEndJoin() {
+	private void doEndJoinNotEnough() {
+		doEndJoinNotEnoughOne();
+		bot.setMode("#werewolf", "-v KZK");
+		doEndJoinNotEnoughTwo();
+	}
+
+	private void doEndJoinNotEnoughTwo() {
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendMessage("#werewolf", "03Sorry, not enough people to make a valid mob.");
+	}
+
+	private void doEndJoinNotEnoughOne() {
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 		bot.sendMessage("#werewolf", "03Joining ends.");
 		bot.setMode("#werewolf", "-m");
-		bot.setMode("#werewolf", "-v KZK");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendMessage("#werewolf", "03Sorry, not enough people to make a valid mob.");
 	}
 
 	private void doFivePlayers() {
@@ -99,35 +107,15 @@ public class WolfTest {
 		doJoinHunt("QuiDaM");
 		doJoinHunt("Sjet");
 		doJoinHunt("Tox");
-		expect(bot.getOutgoingQueueSize()).andReturn(0);
-		bot.sendMessage("#werewolf", "03Joining ends.");
-		bot.setMode("#werewolf", "+m");
-		expect(bot.getNick()).andReturn("Kalbot");
-
-		bot.sendNotice(
-				"KZK",
-				"You are a peaceful peasant turned vigilante, a Villager! You must root out the Werewolf by casting accusations or protesting innocence at the daily village meeting, and voting who you believe to be untrustworthy during the daily Lynch Vote. Good luck!");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendNotice(
-				"Luke",
-				"You are a peaceful peasant turned vigilante, a Villager! You must root out the Werewolf by casting accusations or protesting innocence at the daily village meeting, and voting who you believe to be untrustworthy during the daily Lynch Vote. Good luck!");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendNotice(
-				"Dumnorix",
-				"You are one granted the gift of second sight, a Seer! Each night you may enquire as to the nature of one of your fellow village dwellers, and WereBot will tell you whether or not that person is a Werewolf - a powerful gift indeed! But beware revealing this information to the Werewolf, or face swift retribution!");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendNotice(
-				"QuiDaM",
-				"You are a prowler of the night, a Werewolf! You must decide your nightly victims. By day you must deceive the villager and attempt to blend in. Keep this information to yourself! Good luck!");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendNotice(
-				"Sjet",
-				"You are a peaceful peasant turned vigilante, a Villager! You must root out the Werewolf by casting accusations or protesting innocence at the daily village meeting, and voting who you believe to be untrustworthy during the daily Lynch Vote. Good luck!");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendNotice(
-				"Tox",
-				"You are a peaceful peasant turned vigilante, a Villager! You must root out the Werewolf by casting accusations or protesting innocence at the daily village meeting, and voting who you believe to be untrustworthy during the daily Lynch Vote. Good luck!");
-
+		doEndJoin();
+		
+		doIsVillager("KZK");
+		doIsVillager("Luke");
+		doIsSeer("Dumnorix");
+		doIsWerewolf("QuiDaM");
+		doIsVillager("Sjet");
+		doIsVillager("Tox");
+		
 		bot.setMode("#werewolf", "-vvvv KZK Luke Dumnorix QuiDaM");
 		bot.setMode("#werewolf", "-vv Sjet Tox");
 		expect(bot.getNick()).andReturn("Kalbot");
@@ -138,15 +126,42 @@ public class WolfTest {
 		expect(bot.getNick()).andReturn("Kalbot");
 		bot.sendMessage(
 				"#werewolf",
-				"04Werewolf, you have 053004 seconds to decide who to attack. To make your final decision type '/msg Kalbot kill <player>'");
+				"04Werewolf, you have 056004 seconds to decide who to attack. To make your final decision type '/msg Kalbot kill <player>'");
 		expect(bot.getNick()).andReturn("Kalbot");
 		bot.sendMessage(
 				"#werewolf",
-				"04Seer, you have 053004 seconds to PM one name to Kalbot and discover their true intentions. To enquire with the spirits type '/msg Kalbot see <player>'");
+				"04Seer, you have 056004 seconds to PM one name to Kalbot and discover their true intentions. To enquire with the spirits type '/msg Kalbot see <player>'");
 
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
-		timer.schedule(EasyMock.capture(wereTask), EasyMock.eq(30L * 1000L));
+		timer.schedule(EasyMock.capture(wereTask), EasyMock.eq(60L * 1000L));
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
+	}
+
+	private void doEndJoin() {
+		expect(bot.getOutgoingQueueSize()).andReturn(0);
+		bot.sendMessage("#werewolf", "03Joining ends.");
+		bot.setMode("#werewolf", "+m");
+	}
+
+	private void doIsWerewolf(String name) {
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendNotice(
+				name,
+				"You are a prowler of the night, a Werewolf! You must decide your nightly victims. By day you must deceive the villager and attempt to blend in. Keep this information to yourself! Good luck!");
+	}
+
+	private void doIsSeer(String name) {
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendNotice(
+				name,
+				"You are one granted the gift of second sight, a Seer! Each night you may enquire as to the nature of one of your fellow village dwellers, and WereBot will tell you whether or not that person is a Werewolf - a powerful gift indeed! But beware revealing this information to the Werewolf, or face swift retribution!");
+	}
+
+	private void doIsVillager(String Name) {
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendNotice(
+				Name,
+				"You are a peaceful peasant turned vigilante, a Villager! You must root out the Werewolf by casting accusations or protesting innocence at the daily village meeting, and voting who you believe to be untrustworthy during the daily Lynch Vote. Good luck!");
 	}
 
 	private void doJoinHunt(String name) {
@@ -159,10 +174,10 @@ public class WolfTest {
 
 	@Test
 	public void testNotEnoughPlayers() throws Exception {
-		doEndJoin();
+		doEndJoinNotEnough();
 		// second try
 		doStart();
-		doEndJoin();
+		doEndJoinNotEnough();
 
 		replayAll();
 		initOnePlayer();
@@ -176,12 +191,9 @@ public class WolfTest {
 	@Test
 	public void testTwoPlayers() {
 		doJoinHunt("Luke");
-		expect(bot.getOutgoingQueueSize()).andReturn(0);
-		bot.sendMessage("#werewolf", "03Joining ends.");
-		bot.setMode("#werewolf", "-m");
+		doEndJoinNotEnoughOne();
 		bot.setMode("#werewolf", "-vv KZK Luke");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendMessage("#werewolf", "03Sorry, not enough people to make a valid mob.");
+		doEndJoinNotEnoughTwo();
 
 		replayAll();
 		initOnePlayer();

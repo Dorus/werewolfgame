@@ -1,5 +1,15 @@
 package test;
 
+import static org.easymock.EasyMock.anyLong;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.powermock.api.easymock.PowerMock.expectNew;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.powermock.api.support.membermodification.MemberMatcher.method;
+import static org.powermock.api.support.membermodification.MemberMatcher.methods;
+import static org.powermock.api.support.membermodification.MemberModifier.suppress;
+
 import java.io.IOException;
 import java.sql.Time;
 import java.util.Timer;
@@ -8,9 +18,6 @@ import java.util.TimerTask;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.easymock.Mock;
-import org.easymock.internal.matchers.Any;
-import org.hamcrest.core.AnyOf;
-import org.hamcrest.core.IsAnything;
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.NickAlreadyInUseException;
 import org.jibble.pircbot.PircBot;
@@ -24,8 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import werewolf.ImplBot;
 import werewolf.Werewolf;
 import werewolf.objects.Players;
-import static org.powermock.api.easymock.PowerMock.*;
-import static org.easymock.EasyMock.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Werewolf.class, PircBot.class, ImplBot.class, Time.class, Players.class })
@@ -55,6 +60,74 @@ public class WolfTest {
 
 		doConnect();
 		doStart();
+	}
+
+	@Test
+	public void testNotEnoughPlayers() throws Exception {
+		doEndJoinNotEnough();
+		// second try
+		doStart();
+		doEndJoinNotEnough();
+
+		replayAll();
+		initOnePlayer();
+		wereTask.getValue().run();
+		// second try
+		werewolf.onMessage("#werewolf", "KZK", "~KZK", "uto-9B284F3C.static.chello.nl", "!start");
+		wereTask.getValue().run();
+		verifyAll();
+	}
+
+	@Test
+	public void testTwoPlayers() {
+		doJoinHunt("Luke");
+		doEndJoinNotEnoughOne();
+		bot.setMode("#werewolf", "-vv KZK Luke");
+		doEndJoinNotEnoughTwo();
+
+		replayAll();
+		initOnePlayer();
+		werewolf.onPrivateMessage("Luke", "~Luke", "uto-C7487DCD.nycmny.fios.verizon.net", "join");
+		wereTask.getValue().run();
+		verifyAll();
+	}
+
+	@Test
+	public void testSixPlayers() {
+		doFivePlayers();
+		replayAll();
+		initGame();
+		verifyAll();
+	}
+
+	@Test
+	public void testNightOne() throws Exception {
+		doFivePlayers();
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendNotice("Dumnorix", "You will see the identity of KZK upon the dawning of tomorrow.");
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendNotice("QuiDaM", "You have chosen Tox to feast on tonight.");
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendMessage(
+				"#werewolf",
+				"02When the villagers gather at the village center, one comes running from the hanging tree, screaming at others to follow. When they arrive at the hanging ree, a gentle creaking echoes through the air as the body of 02Tox02 swings gently in the breeze, it's arms ripped off at the shoulders. It appears the attacker was not without a sense of irony...");
+		expect(bot.getNick()).andReturn("Kalbot").times(2);
+		bot.sendMessage("#werewolf", "020202Tox02, the Villager, has been killed!");
+		bot.setMode("#werewolf", "-v Tox");
+		expect(bot.getNick()).andReturn("Kalbot").times(2);
+		bot.sendNotice("Dumnorix", "You find the identity of KZK to be Villager?!");
+		bot.setMode("#werewolf", "+vvvv KZK Luke Dumnorix QuiDaM");
+		bot.setMode("#werewolf", "+v Sjet");
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendMessage("#werewolf", "04Villagers, you have 059004 seconds to discuss suspicions, or cast accusations, after which time a lynch vote will be called.");
+		expect(bot.getOutgoingQueueSize()).andReturn(0);
+		timer.schedule(EasyMock.capture(wereTask), EasyMock.eq(90L * 1000L));
+		replayAll();
+		initGame();
+		werewolf.onPrivateMessage("Dumnorix", "~Dumnorix", "uto-94ADF0B9.adsl-dyn.isp.belgacom.be", "see KZK");
+		werewolf.onPrivateMessage("QuiDaM", "~QuiDaM", "uto-9A6CF2A4.mc.videotron.ca", "kill Tox");
+		wereTask.getValue().run();
+		verifyAll();
 	}
 
 	private void doConnect() throws NickAlreadyInUseException, IOException, IrcException {
@@ -108,14 +181,14 @@ public class WolfTest {
 		doJoinHunt("Sjet");
 		doJoinHunt("Tox");
 		doEndJoin();
-		
+
 		doIsVillager("KZK");
 		doIsVillager("Luke");
 		doIsSeer("Dumnorix");
 		doIsWerewolf("QuiDaM");
 		doIsVillager("Sjet");
 		doIsVillager("Tox");
-		
+
 		bot.setMode("#werewolf", "-vvvv KZK Luke Dumnorix QuiDaM");
 		bot.setMode("#werewolf", "-vv Sjet Tox");
 		expect(bot.getNick()).andReturn("Kalbot");
@@ -135,6 +208,14 @@ public class WolfTest {
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 		timer.schedule(EasyMock.capture(wereTask), EasyMock.eq(60L * 1000L));
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
+	}
+
+	private void doJoinHunt(String name) {
+		bot.setMode("#werewolf", "+v " + name);
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendMessage("#werewolf", "0202" + name + "02 has joined the hunt.");
+		expect(bot.getNick()).andReturn("Kalbot");
+		bot.sendNotice(name, "Added to the game. Your role will be given once registration elapses.");
 	}
 
 	private void doEndJoin() {
@@ -162,52 +243,6 @@ public class WolfTest {
 		bot.sendNotice(
 				Name,
 				"You are a peaceful peasant turned vigilante, a Villager! You must root out the Werewolf by casting accusations or protesting innocence at the daily village meeting, and voting who you believe to be untrustworthy during the daily Lynch Vote. Good luck!");
-	}
-
-	private void doJoinHunt(String name) {
-		bot.setMode("#werewolf", "+v " + name);
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendMessage("#werewolf", "0202" + name + "02 has joined the hunt.");
-		expect(bot.getNick()).andReturn("Kalbot");
-		bot.sendNotice(name, "Added to the game. Your role will be given once registration elapses.");
-	}
-
-	@Test
-	public void testNotEnoughPlayers() throws Exception {
-		doEndJoinNotEnough();
-		// second try
-		doStart();
-		doEndJoinNotEnough();
-
-		replayAll();
-		initOnePlayer();
-		wereTask.getValue().run();
-		// second try
-		werewolf.onMessage("#werewolf", "KZK", "~KZK", "uto-9B284F3C.static.chello.nl", "!start");
-		wereTask.getValue().run();
-		verifyAll();
-	}
-
-	@Test
-	public void testTwoPlayers() {
-		doJoinHunt("Luke");
-		doEndJoinNotEnoughOne();
-		bot.setMode("#werewolf", "-vv KZK Luke");
-		doEndJoinNotEnoughTwo();
-
-		replayAll();
-		initOnePlayer();
-		werewolf.onPrivateMessage("Luke", "~Luke", "uto-C7487DCD.nycmny.fios.verizon.net", "join");
-		wereTask.getValue().run();
-		verifyAll();
-	}
-
-	@Test
-	public void testSixPlayers() {
-		doFivePlayers();
-		replayAll();
-		initGame();
-		verifyAll();
 	}
 
 	private void initOnePlayer() {

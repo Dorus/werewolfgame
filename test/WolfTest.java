@@ -85,9 +85,9 @@ public class WolfTest {
 		doEndJoinNotEnough();
 		replayAll();
 		initOnePlayer();
-		wereTask.getValue().run();
+		initTimer();
 		initOnMsg("KZK", "!start");
-		wereTask.getValue().run();
+		initTimer();
 		verifyAll();
 	}
 
@@ -95,12 +95,12 @@ public class WolfTest {
 	public void testTwoPlayers() throws Exception {
 		doJoinHunt("Luke");
 		doEndJoinNotEnoughOne();
-		bot.setMode("#werewolf", "-vv KZK Luke");
+		doSetMode("-vv KZK Luke");
 		doEndJoinNotEnoughTwo();
 		replayAll();
 		initOnePlayer();
 		initJoin("Luke");
-		wereTask.getValue().run();
+		initTimer();
 		verifyAll();
 	}
 
@@ -124,14 +124,15 @@ public class WolfTest {
 	public void testDayOne() throws Exception {
 		doDayOne();
 		replayAll();
-		initNightOne();
-		wereTask.getValue().run();
-		initOnPrivMsg("KZK", "Vote Luke");
-		initOnPrivMsg("Luke", "Vote KZK");
-		initOnPrivMsg("Dumnorix", "Vote Luke");
-		initOnPrivMsg("QuiDaM", "Vote KZK");
-		initOnPrivMsg("Sjet", "Vote Luke");
-		wereTask.getValue().run();
+		initDayOne();
+		verifyAll();
+	}
+
+	@Test
+	public void testNightTwo() throws Exception {
+		doNightTwo();
+		replayAll();
+		initNightTwo();
 		verifyAll();
 	}
 
@@ -144,13 +145,13 @@ public class WolfTest {
 		bot.connect("irc.utonet.org");
 		bot.identify("password");
 		bot.joinChannel("#werewolf");
-		bot.setMode("#werewolf", "-m");
+		doSetMode("-m");
 	}
 
 	private void doStart() throws Exception {
 		doSendMessage("0202KZK02 has started a game. Everyone else has 029002 seconds to join in the mob. '/msg Kalbot join' to join the game.");
 		doSendNotice("#werewolf", "KZK has started a game!");
-		bot.setMode("#werewolf", "+v KZK");
+		doSetMode("+v KZK");
 		doSendNotice("KZK", "Added to the game. Your role will be given once registration elapses.");
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 		expectNew(Timer.class).andReturn(timer);
@@ -159,14 +160,14 @@ public class WolfTest {
 
 	private void doEndJoinNotEnough() {
 		doEndJoinNotEnoughOne();
-		bot.setMode("#werewolf", "-v KZK");
+		doSetMode("-v KZK");
 		doEndJoinNotEnoughTwo();
 	}
 
 	private void doEndJoinNotEnoughOne() {
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 		bot.sendMessage("#werewolf", "03Joining ends.");
-		bot.setMode("#werewolf", "-m");
+		doSetMode("-m");
 	}
 
 	private void doEndJoinNotEnoughTwo() {
@@ -180,39 +181,33 @@ public class WolfTest {
 		doJoinHunt("Sjet");
 		doJoinHunt("Tox");
 		doEndJoin();
-	
 		doIsVillager("KZK");
 		doIsVillager("Luke");
 		doIsSeer("Dumnorix");
 		doIsWerewolf("QuiDaM");
 		doIsVillager("Sjet");
 		doIsVillager("Tox");
-	
-		bot.setMode("#werewolf", "-vvvv KZK Luke Dumnorix QuiDaM");
-		bot.setMode("#werewolf", "-vv Sjet Tox");
-	
+		doSetMode("-vvvv KZK Luke Dumnorix QuiDaM");
+		doSetMode("-vv Sjet Tox");
 		doSendMessage("02Night descends on the sleepy village, and a full moon rises. Unknown to the villagers, tucked up in their warm beds, the early demise of one of their number is being plotted.");
-		doWerewolfDoKill();
+		doWolfDoKill();
 		doSeerDoSee();
-	
 		doSetTimer(60);
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 	}
 
 	private void doNightOne() {
 		doFivePlayers();
-		doSendNotice("Dumnorix", "You will see the identity of KZK upon the dawning of tomorrow.");
-		doSendNotice("QuiDaM", "You have chosen Tox to feast on tonight.");
+		doWolfPickKill("Dumnorix", "KZK");
+		doSeerPickSee("QuiDaM", "Tox");
 		doSendMessage("02When the villagers gather at the village center, one comes running from the hanging tree, screaming at others to follow. When they arrive at the hanging ree, a gentle creaking echoes through the air as the body of 02Tox02 swings gently in the breeze, it's arms ripped off at the shoulders. It appears the attacker was not without a sense of irony...");
-		expect(bot.getNick()).andReturn("Kalbot");
-		doSendMessage("020202Tox02, the Villager, has been killed!");
-		bot.setMode("#werewolf", "-v Tox");
+		doWolfKill("Tox", "Villager");
+		doSetMode("-v Tox");
 		expect(bot.getNick()).andReturn("Kalbot");
 		doSendNotice("Dumnorix", "You find the identity of KZK to be Villager?!");
-		bot.setMode("#werewolf", "+vvvv KZK Luke Dumnorix QuiDaM");
-		bot.setMode("#werewolf", "+v Sjet");
-		doSendMessage("04Villagers, you have 059004 seconds to discuss suspicions, or cast accusations, after which time a lynch vote will be called.");
-		doSetTimer(90);
+		doSetMode("+vvvv KZK Luke Dumnorix QuiDaM");
+		doSetMode("+v Sjet");
+		doEndNight();
 	}
 
 	private void doDayOne() {
@@ -229,15 +224,33 @@ public class WolfTest {
 		expect(bot.getNick()).andReturn("Kalbot");
 		doSendMessage("0202Luke02, the 02Villager, is lynched!");
 		doSendNotice("Luke", "You are allowed a single line as your dying breath.");
-		bot.setMode("#werewolf", "-vvvv KZK Dumnorix QuiDaM Sjet");
+		doSetMode("-vvvv KZK Dumnorix QuiDaM Sjet");
 		doSendMessage("0202As the moon rises, the lynching mob dissipates, return to their homes and settle into an uneasy sleep. But in the pale moonlight, something stirs...");
-		doWerewolfDoKill();
+		doWolfDoKill();
 		doSeerDoSee();
 		doSetTimer(60);
+		bot.deVoice("#werewolf", "Luke");
+	}
+
+	private void doNightTwo() {
+		doDayOne();
+		doWolfPickKill("Dumnorix", "QuiDaM");
+		doSeerPickSee("QuiDaM", "Dumnorix");
+		doSendMessage("02The first villager to arrive at the center shrieks in horror - lying on the cobbles is a blood stained Ouija Board, and atop it sits 02Dumnorix02's head. It appears 02Dumnorix02 had been seeking the guidance of the spirits to root out the Werewolf, but apparently the magic eight ball didn't see THIS one coming...");
+		doWolfKill("Dumnorix",  "Seer");
+		doSetMode("-v Dumnorix");
+		doSendNotice("Dumnorix", "It appears the Werewolf got to you before your vision did...");
+		doSetMode("+vvv KZK QuiDaM Sjet");
+		doEndNight();
+	}
+
+	private void doEndNight() {
+		doSendMessage("04Villagers, you have 059004 seconds to discuss suspicions, or cast accusations, after which time a lynch vote will be called.");
+		doSetTimer(90);
 	}
 
 	private void doJoinHunt(String name) {
-		bot.setMode("#werewolf", "+v " + name);
+		doSetMode("+v " + name);
 		doSendMessage("0202" + name + "02 has joined the hunt.");
 		doSendNotice(name, "Added to the game. Your role will be given once registration elapses.");
 	}
@@ -245,7 +258,11 @@ public class WolfTest {
 	private void doEndJoin() {
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 		bot.sendMessage("#werewolf", "03Joining ends.");
-		bot.setMode("#werewolf", "+m");
+		doSetMode("+m");
+	}
+
+	private void doSetMode(String mode) {
+		bot.setMode("#werewolf", mode);
 	}
 
 	private void doIsWerewolf(String name) {
@@ -270,12 +287,25 @@ public class WolfTest {
 		doSendMessage("0202" + name + "02 has voted for 02" + name2 + "02!");
 	}
 
-	private void doWerewolfDoKill() {
+	private void doWolfDoKill() {
 		doSendMessage("04Werewolf, you have 056004 seconds to decide who to attack. To make your final decision type '/msg Kalbot kill <player>'");
+	}
+
+	private void doWolfPickKill(String name1, String name2) {
+		doSendNotice(name1, "You will see the identity of " + name2 + " upon the dawning of tomorrow.");
+	}
+
+	private void doWolfKill(String name, String role) {
+		expect(bot.getNick()).andReturn("Kalbot");
+		doSendMessage("020202" + name + "02, the " + role + ", has been killed!");
 	}
 
 	private void doSeerDoSee() {
 		doSendMessage("04Seer, you have 056004 seconds to PM one name to Kalbot and discover their true intentions. To enquire with the spirits type '/msg Kalbot see <player>'");
+	}
+
+	private void doSeerPickSee(String name1, String name2) {
+		doSendNotice(name1, "You have chosen " + name2 + " to feast on tonight.");
 	}
 
 	private void doSendMessage(String msg) {
@@ -300,13 +330,6 @@ public class WolfTest {
 		initOnMsg("KZK", "!start");
 	}
 
-	private void initNightOne() throws Exception {
-		initGame();
-		initOnPrivMsg("Dumnorix", "see KZK");
-		initOnPrivMsg("QuiDaM", "kill Tox");
-		wereTask.getValue().run();
-	}
-
 	private void initGame() throws Exception {
 		initOnePlayer();
 		initJoin("Luke");
@@ -314,11 +337,41 @@ public class WolfTest {
 		initJoin("QuiDaM");
 		initJoin("Sjet");
 		initJoin("Tox");
-		wereTask.getValue().run();
+		initTimer();
+	}
+
+	private void initNightOne() throws Exception {
+		initGame();
+		initOnPrivMsg("Dumnorix", "see KZK");
+		initOnPrivMsg("QuiDaM", "kill Tox");
+		initTimer();
+	}
+
+	private void initDayOne() throws Exception {
+		initNightOne();
+		initTimer();
+		initOnPrivMsg("KZK", "Vote Luke");
+		initOnPrivMsg("Luke", "Vote KZK");
+		initOnPrivMsg("Dumnorix", "Vote Luke");
+		initOnPrivMsg("QuiDaM", "Vote KZK");
+		initOnPrivMsg("Sjet", "Vote Luke");
+		initTimer();
+		initOnMsg("Luke", "It wasn't me!");
+	}
+
+	private void initNightTwo() throws Exception {
+		initDayOne();
+		initOnPrivMsg("Dumnorix", "see QuiDaM");
+		initOnPrivMsg("QuiDaM", "kill Dumnorix");
+		initTimer();
 	}
 
 	private void initJoin(String name) {
 		initOnPrivMsg(name, "join");
+	}
+
+	private void initTimer() {
+		wereTask.getValue().run();
 	}
 
 	private void initOnMsg(String name, String command) {

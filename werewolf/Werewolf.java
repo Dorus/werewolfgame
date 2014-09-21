@@ -35,7 +35,7 @@ public class Werewolf implements IntBot {
 	private ImplBot bot = new ImplBot(this);
 	private Votes votes2;
 	private Votes wolfVictim2;
-	private Players players2;
+	private Players players2 = new Players();;
 
 	public final static int // (final because cannot be altered)
 			MINPLAYERS = 5, // Minimum number of players to start a game
@@ -868,11 +868,8 @@ public class Werewolf implements IntBot {
 				bot.setName_(name);
 				bot.connect(network);
 				Thread.sleep(1000); // allow it some time before identifiying
-				// if (!ns.equalsIgnoreCase("none")) {
-				// bot.sendMessage(ns, command); // identify with nickname service
 				bot.identify(command);
 				Thread.sleep(2000); // allow the ident to go through before joining
-				// }
 				bot.joinChannel(gameChan);
 				bot.setMode(gameChan, "-m");
 				connected = true;
@@ -915,18 +912,14 @@ public class Werewolf implements IntBot {
 	}
 
 	protected void startGame(String sender) {
-		if (bot.getNick() != name)	{
+		if (bot.getNick() != name) {
 			bot.changeNick(name);
 		}
-		
+
 		if (doBarks)
 			idleTimer.cancel(); // don't make comments while the game's on.
 
-		if (players2 == null)
-			players2 = new Players();
-		else {
-			players2.reset();
-		}
+		players2.reset();
 
 		players2.start(MAXPLAYERS);
 		for (int i = 0; i < players2.numPlayers(); i++) {
@@ -941,9 +934,8 @@ public class Werewolf implements IntBot {
 		bot.sendMessage(gameChan, getFromFile("STARTGAME", sender, joinTime, NARRATION));
 
 		sendNotice(gameChan, getFromFile("STARTGAME-NOTICE", sender, NOTICE));
-		
-		joinGame(sender);
 
+		joinGame(sender);
 
 		/*
 		 * if (players2.addPlayer(sender)) { bot.setMode(gameChan, "+v " + sender); sendNotice2(sender, getFromFile("ADDED",

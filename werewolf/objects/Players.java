@@ -97,8 +97,8 @@ public class Players {
 					result += ", ";
 				}
 			}
+			result += get(wolves.get(i));
 			first = false;
-			result += wolf;
 		}
 		return result;
 	}

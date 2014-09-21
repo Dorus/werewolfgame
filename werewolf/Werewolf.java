@@ -81,6 +81,7 @@ public class Werewolf implements IntBot {
 		bot.setLogin_("Werewolf");
 		bot.setVersion_("Werewolf Game Bot by LLamaBoy and Darkshine - using pIRC framework from http://www.jible.org");
 		bot.setMessageDelay(500);
+		bot.setAutoNickChange(true);
 
 		String filename = "werewolf.ini", lineRead = "";
 		gameFile = "wolfgame.txt";
@@ -914,6 +915,10 @@ public class Werewolf implements IntBot {
 	}
 
 	protected void startGame(String sender) {
+		if (bot.getName() != name)	{
+			bot.changeNick(name);
+		}
+		
 		if (doBarks)
 			idleTimer.cancel(); // don't make comments while the game's on.
 
@@ -1065,8 +1070,9 @@ public class Werewolf implements IntBot {
 				System.out.println("Could not devoice, no dead array");
 			}
 		}
-
-		bot.setMode(gameChan, modes + " " + nicks.trim()); // mode the stragglers that
+		if (count > 0) {
+			bot.setMode(gameChan, modes + " " + nicks.trim()); // mode the stragglers that
+		}
 		// dont make a full 4
 	}
 

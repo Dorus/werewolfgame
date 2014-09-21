@@ -539,10 +539,9 @@ public class Werewolf implements IntBot {
 					+ "the current game to finish before trying again.");
 			return;
 		}
-		// TODO: uncomment
-		// if (!isInChannel(sender)) {
-		// return;
-		// }
+		if (!isInChannel(sender)) {
+			return;
+		}
 		if (players2.isAdded(sender)) // has the player already joined?
 		{
 			sendNotice(sender, "You are already on the player list. Please wait for the next game to join again.");
@@ -761,7 +760,11 @@ public class Werewolf implements IntBot {
 		User users[] = bot.getUsers(gameChan);
 
 		for (int i = 0; i < users.length; i++) {
-			if (users[i].getNick().equals(nick))
+			String nick2 = users[i].getNick();
+			if (nick2.equals("&" + nick) || nick2.equals("~" + nick)) {
+				return true;
+			}
+			if (nick2.equals(nick))
 				return users[i].isOp();
 		}
 		return false;
@@ -1079,7 +1082,8 @@ public class Werewolf implements IntBot {
 		User[] users = bot.getUsers(gameChan);
 
 		for (int i = 0; i < users.length; i++) {
-			if (users[i].getNick().equals(aName))
+			String nick = users[i].getNick();
+			if (aName.equals(nick) || aName.equals("&" + nick) || aName.equals("~" + nick))
 				return true;
 		}
 
@@ -1242,7 +1246,7 @@ public class Werewolf implements IntBot {
 			String rand;
 			do {
 				rand = users[((int) (Math.random() * users.length))].getNick();
-			} while (rand.equals(bot.getNick()));
+			} while (rand.equals(bot.getNick()) || rand.equals("~" + bot.getNick()) || rand.equals("&" + bot.getNick()));
 
 			String msg = getFromFile("BORED", rand, NOTICE);
 			if (msg != null)

@@ -516,7 +516,7 @@ public class Werewolf implements IntBot {
 				} else
 					this.sendNotice(sender, "Your choice is not playing in the current game. Please select someone else.");
 			} catch (Exception x) {
-				this.sendNotice(sender, "Please vote in the correct format: /msg " + bot.getName() + " vote <player>");
+				this.sendNotice(sender, "Please vote in the correct format: /msg " + bot.getNick() + " vote <player>");
 				x.printStackTrace();
 			}
 		} else
@@ -899,7 +899,7 @@ public class Werewolf implements IntBot {
 
 	public void onKick(String channel, String kickerNick, String kickerLogin, String kickerHostname,
 			String recipientNick, String reason) {
-		if (recipientNick.equals(bot.getName()))
+		if (recipientNick.equals(bot.getNick()))
 			bot.joinChannel(channel);
 		else
 			this.onPart(gameChan, recipientNick, null, null);
@@ -915,7 +915,7 @@ public class Werewolf implements IntBot {
 	}
 
 	protected void startGame(String sender) {
-		if (bot.getName() != name)	{
+		if (bot.getNick() != name)	{
 			bot.changeNick(name);
 		}
 		

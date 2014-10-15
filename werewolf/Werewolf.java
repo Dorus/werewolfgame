@@ -1083,7 +1083,7 @@ public class Werewolf implements IntBot {
 
 		for (int i = 0; i < users.length; i++) {
 			String nick = users[i].getNick();
-			if (aName.equals(nick) || aName.equals("&" + nick) || aName.equals("~" + nick))
+			if (nick.equals(aName) || nick.equals("&" + aName) || nick.equals("~" + aName))
 				return true;
 		}
 

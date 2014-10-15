@@ -1277,6 +1277,7 @@ public class Werewolf implements IntBot {
 			votes2 = new Votes(players2.numPlayers());
 			wolfVictim2 = new Votes(players2.numPlayers());
 
+			deop();
 			setRoles();
 
 			if (players2.numPlayers() == 5) { // if there are 5 players, day comes
@@ -1322,6 +1323,15 @@ public class Werewolf implements IntBot {
 			}
 			playDay();
 		}
+	}
 
+	private void deop() {
+		User[] users = bot.getUsers(gameChan);
+		for (User user : users) {
+			String nick = user.getNick();
+			if (user.isOp() && players2.isPlaying(nick)) {
+				bot.sendMessage("ChanServ", "deop " + gameChan + " " + nick);
+			}
+		}
 	}
 }

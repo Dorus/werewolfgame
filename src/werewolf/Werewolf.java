@@ -887,7 +887,7 @@ public class Werewolf implements IntBot {
 	}
 
 	protected void startGame(String sender) {
-		if (bot.getNick() != name) {
+		if (!bot.getNick().equals(name)) {
 			bot.changeNick(name);
 		}
 

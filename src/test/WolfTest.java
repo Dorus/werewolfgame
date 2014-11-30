@@ -27,6 +27,7 @@ import org.easymock.Mock;
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.NickAlreadyInUseException;
 import org.jibble.pircbot.PircBot;
+import org.jibble.pircbot.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -140,7 +141,8 @@ public class WolfTest {
 		bot.setLogin_("Werewolf");
 		bot.setVersion_("Werewolf Game Bot by LLamaBoy and Darkshine - using pIRC framework from http://www.jible.org");
 		bot.setMessageDelay(500);
-		EasyMock.expectLastCall().times(2);
+		bot.setAutoNickChange(true);
+		bot.setMessageDelay(500);
 		bot.setName_("Kalbot");
 		bot.connect("irc.utonet.org");
 		bot.identify("password");
@@ -149,6 +151,7 @@ public class WolfTest {
 	}
 
 	private void doStart() throws Exception {
+		expect(bot.getNick()).andReturn("Kalbot");
 		doSendMessage("0202KZK02 has started a game. Everyone else has 029002 seconds to join in the mob. '/msg Kalbot join' to join the game.");
 		doSendNotice("#werewolf", "KZK has started a game!");
 		doSetMode("+v KZK");
@@ -259,6 +262,7 @@ public class WolfTest {
 		expect(bot.getOutgoingQueueSize()).andReturn(0);
 		bot.sendMessage("#werewolf", "03Joining ends.");
 		doSetMode("+m");
+		expect(bot.getUsers("#werewolf")).andReturn(new User[0]);
 	}
 
 	private void doSetMode(String mode) {

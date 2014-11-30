@@ -394,7 +394,7 @@ public class Werewolf implements IntBot {
 			int sender = players2.getPlayerNumber(aSender);
 			int target = players2.getPlayerNumber(message.substring(message.indexOf(" ") + 1, message.length()).trim());
 
-			if (message.toLowerCase().equalsIgnoreCase("join")) // join the game
+			if (message.equalsIgnoreCase("join")) // join the game
 			{
 				joinGame(aSender);
 				return;
@@ -466,7 +466,7 @@ public class Werewolf implements IntBot {
 						}
 					}
 				}
-				if (message.toLowerCase().equalsIgnoreCase("alive")) {
+				if (message.equalsIgnoreCase("alive")) {
 					String names = "The players left alive are: ";
 
 					for (int i = 0; i < players2.numPlayers(); i++) {
@@ -476,7 +476,7 @@ public class Werewolf implements IntBot {
 
 					this.sendNotice(sender, names);
 				}
-				if (message.toLowerCase().equalsIgnoreCase("role")) {
+				if (message.equalsIgnoreCase("role")) {
 					if (status != GameStatus.PRE) {
 						if (players2.isWolf(sender)) {
 							if (players2.numWolves() == 1)
@@ -604,6 +604,8 @@ public class Werewolf implements IntBot {
 				}
 				System.exit(0);
 			}
+		} else if (message.toLowerCase().startsWith("!join")) {
+			joinGame(sender);
 		} else if (status == GameStatus.IDLE) {
 			if (message.startsWith("!startrek")) // Easter egg suggested by Deepsmeg.
 			{
@@ -798,6 +800,7 @@ public class Werewolf implements IntBot {
 							// TODO: check for win condition!
 						} else {
 							bot.sendMessage(gameChan, getFromFile("FLEE-VILLAGER", players2.get(sender), NARRATION));
+							// TODO: check for win condition!
 						}
 
 						players2.kill(sender);

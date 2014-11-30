@@ -210,11 +210,10 @@ public class Players {
 	// method to go through the player and priority lists, to check if the player
 	// has already joined the game
 	public boolean isAdded(String aName) {
-		String aName2 = aName;
-		if (priority.contains(aName2)) {
+		if (priority.contains(aName)) {
 			return true;
 		}
-		return isPlaying(aName2);
+		return isPlaying(aName);
 	}
 
 	// go through the player list, check the player is in the current game
@@ -265,6 +264,7 @@ public class Players {
 	}
 
 	public boolean isDead(String aName) {
+		// TODO handle arrayOutOfBound if getPlayerNumber returns -1 
 		return isDead(getPlayerNumber(aName));
 	}
 

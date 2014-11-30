@@ -712,35 +712,8 @@ public class Werewolf implements IntBot {
 		// when it looks like the bot is accused, send a reply
 		{
 			bot.sendMessage(gameChan, "Hey, screw you, " + sender + "! I didn't kill anyone!");
-		} else {
-			if (status != GameStatus.IDLE) {
-				if (status != GameStatus.PRE) {
-					for (int i = 0; i < players2.numPlayers(); i++) {
-						if (players2.isDead(i) && sender.equals(players2.get(i)))
-							bot.deVoice(gameChan, sender);
-					}
-
-					// Not Working Kick the seer if he quotes the SEER-SEE msg.
-					// String check = getFromFile("SEER-SEE", "QZ", 0, 0);
-					// int ind = message.indexOf(check.substring(0, check.indexOf("QZ") -
-					// 2));
-					//
-					// if(ind > 0)
-					// {
-					// if(message.indexOf(this.getName()) > 0)
-					// {
-					// if(ind > message.indexOf(this.getName())) //check if the player
-					// fabricated a quote to incriminate the bot
-					// :)
-					// this.kick(gameChan, sender,
-					// getFromFile("CHEAT-KICK", sender, 0, NOTICE));
-					// }
-					// else
-					// this.kick(gameChan, sender,
-					// getFromFile("CHEAT-KICK", sender, 0, NOTICE));
-					// }
-				}
-			}
+		} else if (status != GameStatus.IDLE && status != GameStatus.PRE && players2.isDead(sender)) {
+			bot.deVoice(gameChan, sender);
 		}
 	}
 
@@ -774,11 +747,9 @@ public class Werewolf implements IntBot {
 	// listed name
 	public void onNickChange(String oldNick, String login, String hostname, String newNick) {
 		if (players2.changeNick(oldNick, newNick)) {
-			if (players2.isPlaying(oldNick)) {
-				if (!players2.isDead(oldNick)) {
-					bot.sendMessage(gameChan, Colors.DARK_GREEN + oldNick + " has changed nick to " + newNick
-							+ "; Player list updated.");
-				}
+			if (players2.isPlaying(oldNick) && !players2.isDead(oldNick)) {
+				bot.sendMessage(gameChan, Colors.DARK_GREEN + oldNick + " has changed nick to " + newNick
+						+ "; Player list updated.");
 			} else if (players2.isAdded(oldNick)) {
 				bot.sendMessage(gameChan, Colors.DARK_GREEN + newNick + " has changed nick; Priority list updated.");
 			}
@@ -824,6 +795,7 @@ public class Werewolf implements IntBot {
 					if (!players2.isDead(sender)) {
 						if (players2.isWolf(sender)) {
 							bot.sendMessage(gameChan, getFromFile("FLEE-WOLF", players2.get(sender), NARRATION));
+							// TODO: check for win condition!
 						} else {
 							bot.sendMessage(gameChan, getFromFile("FLEE-VILLAGER", players2.get(sender), NARRATION));
 						}
@@ -1045,7 +1017,7 @@ public class Werewolf implements IntBot {
 
 		for (int i = 0; i < players2.numPlayers(); i++) {
 			try {
-				if (!players2.isDead(i) && players2.get(i) != null) {
+				if (!players2.isDead(i)) {
 					nicks += players2.get(i) + " ";
 					modes += "v";
 					count++;

@@ -50,7 +50,7 @@ public class Players {
 	public String get(int target) {
 		return players.get(target);
 	}
-
+	
 	public int getWolve(int target) {
 		return wolves.get(target);
 	}
@@ -144,10 +144,6 @@ public class Players {
 		return priority.add(player);
 	}
 
-	public String set(int i, String newNick) {
-		return players.set(i, newNick);
-	}
-
 	public boolean removePriority(String sender) {
 		return priority.remove(sender);
 	}
@@ -214,19 +210,16 @@ public class Players {
 	// method to go through the player and priority lists, to check if the player
 	// has already joined the game
 	public boolean isAdded(String aName) {
-		if (priority.contains(aName)) {
+		String aName2 = aName;
+		if (priority.contains(aName2)) {
 			return true;
 		}
-		return isPlaying(aName);
+		return isPlaying(aName2);
 	}
 
 	// go through the player list, check the player is in the current game
 	public boolean isPlaying(String aName) {
-		return players.contains(aName);
-	}
-
-	public boolean isPriority(String aName) {
-		return priority.contains(aName);
+		return getPlayerNumber(aName) != -1;
 	}
 
 	/**
@@ -237,7 +230,12 @@ public class Players {
 	 * @return the number of the player
 	 */
 	public int getPlayerNumber(String aName) {
-		return players.indexOf(aName);
+		for (int i = 0; i < players.size(); i++) {
+			if (players.get(i).equalsIgnoreCase(aName)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	public int getSeer() {
@@ -266,8 +264,8 @@ public class Players {
 		return false;
 	}
 
-	public boolean isDead(String oldNick) {
-		return isDead(getPlayerNumber(oldNick));
+	public boolean isDead(String aName) {
+		return isDead(getPlayerNumber(aName));
 	}
 
 	public void setRoles(int wolves, int seers) {
@@ -284,6 +282,13 @@ public class Players {
 
 	Vector<Integer> randList;
 
+	/**
+	 * Returns a random player. Never picks the same player twice.
+	 * 
+	 * @throws ArrayIndexOutOfBoundsException if there are no more unique players. 
+	 * 
+	 * @return the number of the random player
+	 */
 	private int getRandomPlayer() {
 		if (randList == null) {
 			randList = new Vector<Integer>(numPlayers(), 1);
@@ -294,3 +299,4 @@ public class Players {
 		return randList.remove((int) (Math.random() * randList.size()));
 	}
 }
+

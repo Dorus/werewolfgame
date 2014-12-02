@@ -533,7 +533,10 @@ public class Werewolf implements IntBot {
 	}
 
 	private void joinGame(String sender) {
-		if (status != GameStatus.PRE && status != GameStatus.IDLE) {
+		if (status == GameStatus.IDLE) {
+			return;
+		}
+		if (status != GameStatus.PRE) {
 			// if the game is already running, dont add anyone else to either list
 			sendNotice(sender, "The game is currently underway. Please wait for "
 					+ "the current game to finish before trying again.");

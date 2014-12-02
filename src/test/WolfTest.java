@@ -122,6 +122,14 @@ public class WolfTest {
 	}
 
 	@Test
+	public void testWolfLeaves() throws Exception {
+		doWolfLeaves();
+		replayAll();
+		initWolfLeaves();
+		verifyAll();
+	}
+
+	@Test
 	public void testDayOne() throws Exception {
 		doDayOne();
 		replayAll();
@@ -213,6 +221,18 @@ public class WolfTest {
 		doEndNight();
 	}
 
+	private void doWolfLeaves() throws Exception {
+		doNightOne();
+		doSendMessage("0202QuiDaM02 has fled. They were a Wolf.");
+		doSendMessage("02With the beasts slain, the villagers cheer! Their peaceful village is once again free from the scourge of the WOLF!");
+		doSendMessage("02Congratulations, Villagers! You win!");
+		doSetMode("-vvvv KZK Luke Dumnorix Sjet");
+		doSetMode("-m");
+		timer.cancel();
+		doStart();
+		doNightOne();
+	}
+
 	private void doDayOne() {
 		doNightOne();
 		doSendMessage("04Villagers, you now have 053004 seconds to vote for the person you would like to see lynched! Type '/msg Kalbot vote <player>' to cast your vote. Votes are non retractable!");
@@ -240,7 +260,7 @@ public class WolfTest {
 		doWolfPickKill("Dumnorix", "QuiDaM");
 		doSeerPickSee("QuiDaM", "Dumnorix");
 		doSendMessage("02The first villager to arrive at the center shrieks in horror - lying on the cobbles is a blood stained Ouija Board, and atop it sits 02Dumnorix02's head. It appears 02Dumnorix02 had been seeking the guidance of the spirits to root out the Werewolf, but apparently the magic eight ball didn't see THIS one coming...");
-		doWolfKill("Dumnorix",  "Seer");
+		doWolfKill("Dumnorix", "Seer");
 		doSetMode("-v Dumnorix");
 		doSendNotice("Dumnorix", "It appears the Werewolf got to you before your vision did...");
 		doSetMode("+vvv KZK QuiDaM Sjet");
@@ -328,9 +348,11 @@ public class WolfTest {
 	}
 
 	private void initOnePlayer() throws Exception {
-		werewolf = createPartialMockAndInvokeDefaultConstructor(Werewolf.class, "isInChannel");
-		expectPrivate(werewolf, "isInChannel", anyString()).andReturn(true).anyTimes();
-		replay(werewolf);
+		if (werewolf == null) {
+			werewolf = createPartialMockAndInvokeDefaultConstructor(Werewolf.class, "isInChannel");
+			expectPrivate(werewolf, "isInChannel", anyString()).andReturn(true).anyTimes();
+			replay(werewolf);
+		}
 		initOnMsg("KZK", "!start");
 	}
 
@@ -349,6 +371,12 @@ public class WolfTest {
 		initOnPrivMsg("Dumnorix", "see KZK");
 		initOnPrivMsg("QuiDaM", "kill Tox");
 		initTimer();
+	}
+
+	private void initWolfLeaves() throws Exception {
+		initNightOne();
+		initOnPart("QuiDaM");
+		initNightOne();
 	}
 
 	private void initDayOne() throws Exception {
@@ -386,6 +414,11 @@ public class WolfTest {
 	private void initOnPrivMsg(String name, String command) {
 		String[] playerInfo = players.get(name);
 		werewolf.onPrivateMessage(name, playerInfo[0], playerInfo[1], command);
+	}
+
+	private void initOnPart(String name) {
+		String[] playerInfo = players.get(name);
+		werewolf.onPart("#werewold", name, playerInfo[0], playerInfo[1]);
 	}
 
 }

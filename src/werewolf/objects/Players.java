@@ -197,7 +197,7 @@ public class Players {
 		alive--;
 		dead[player] = true;
 		if (wolf[player]) {
-			wolves.remove(players.get(player));
+			wolves.remove((Integer)player);
 		}
 	}
 

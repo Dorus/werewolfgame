@@ -762,6 +762,10 @@ public class Werewolf implements IntBot {
 	// and if there is a priority list, add the first person from that in his
 	// place.
 	public void onPart(String channel, String aSender, String login, String hostname) {
+		if (players2.removePriority(aSender)) {
+			bot.sendMessage(gameChan, Colors.DARK_GREEN + Colors.UNDERLINE + aSender + Colors.NORMAL + Colors.DARK_GREEN
+					+ ", a player on the priority list, has left. Removing from list...");
+		}
 		if (status != GameStatus.IDLE) {
 			int sender = players2.getPlayerNumber(aSender);
 			if (sender != -1) {
@@ -805,7 +809,9 @@ public class Werewolf implements IntBot {
 
 						wolfVictim2.removeVote(sender);
 
-						checkWin();
+						if (checkWin()) {
+							return;
+						}
 
 						if (status == GameStatus.VOTE) {
 							votes2.removeVote(sender);
@@ -813,10 +819,6 @@ public class Werewolf implements IntBot {
 					}
 				}
 			}
-		}
-		if (players2.removePriority(aSender)) {
-			bot.sendMessage(gameChan, Colors.DARK_GREEN + Colors.UNDERLINE + aSender + Colors.NORMAL + Colors.DARK_GREEN
-					+ ", a player on the priority list, has left. Removing from list...");
 		}
 	}
 

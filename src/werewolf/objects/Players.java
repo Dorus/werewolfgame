@@ -50,11 +50,11 @@ public class Players {
 	public String get(int target) {
 		return players.get(target);
 	}
-	
+
 	public int getWolve(int target) {
 		return wolves.get(target);
 	}
-	
+
 	public String getWolveName(int target) {
 		return get(wolves.get(target));
 	}
@@ -62,15 +62,15 @@ public class Players {
 	/**
 	 * Returns the name(s) of the other wolve(s).
 	 * 
-	 * @param number
+	 * @param current
 	 *          the number of the current wolf
 	 * @return a string with the names of the other wolves
 	 */
-	public String getOtherWolve(int number) {
+	public String getOtherWolve(int current) {
 		String result = "";
 		boolean first = true;
 		for (int i = 0; i < wolves.size(); i++) {
-			if (wolves.get(i) == number) {
+			if (wolves.get(i) == current) {
 				continue;
 			}
 			if (!first) {
@@ -126,7 +126,8 @@ public class Players {
 	/**
 	 * Tries to add the player to the player list. Succeed it not full yet.
 	 * 
-	 * @param Player the player name.
+	 * @param Player
+	 *          the player name.
 	 * @return If player is added.
 	 */
 	public boolean addPlayer(String player) {
@@ -144,33 +145,41 @@ public class Players {
 		return priority.add(player);
 	}
 
-	public boolean removePriority(String sender) {
-		return priority.remove(sender);
+	public boolean removePriority(String player) {
+		return priority.remove(player);
 	}
 
-	public void remove(int sender) {
+	/**
+	 * Remove a player from the list of active players. Should only be used pre-game, other player numbers might change.
+	 * 
+	 * Use kill(player) instead during game.
+	 * 
+	 * @param player
+	 *          to remove
+	 */
+	public void remove(int player) {
 		alive--;
-		players.remove(sender);
+		players.remove(player);
 	}
 
 	/**
 	 * Replace a current player with a new player from the priority list.
 	 * 
-	 * @param sender
+	 * @param player
 	 *          the current player number.
 	 * @throws ArrayIndexOutOfBoundsException
 	 *           if priority list is empty.
 	 */
-	public void replace(int sender) {
-		players.set(sender, priority.remove(0));
+	public void replace(int player) {
+		players.set(player, priority.remove(0));
 	}
 
 	public boolean isDead(int i) {
-		return dead[i];
+		return i < 0 ? false : dead[i];
 	}
 
 	public boolean isWolf(int i) {
-		return wolf[i];
+		return i < 0 ? false : wolf[i];
 	}
 
 	public boolean isSeer(int i) {
@@ -181,11 +190,14 @@ public class Players {
 		return dead[seer];
 	}
 
-	public void kill(int sender) {
+	public void kill(int player) {
+		if (dead[player]) {
+			return;
+		}
 		alive--;
-		dead[sender] = true;
-		if (wolf[sender]) {
-			wolves.remove(players.get(sender));
+		dead[player] = true;
+		if (wolf[player]) {
+			wolves.remove(players.get(player));
 		}
 	}
 
@@ -264,7 +276,6 @@ public class Players {
 	}
 
 	public boolean isDead(String aName) {
-		// TODO handle arrayOutOfBound if getPlayerNumber returns -1 
 		return isDead(getPlayerNumber(aName));
 	}
 
@@ -285,7 +296,8 @@ public class Players {
 	/**
 	 * Returns a random player. Never picks the same player twice.
 	 * 
-	 * @throws ArrayIndexOutOfBoundsException if there are no more unique players. 
+	 * @throws ArrayIndexOutOfBoundsException
+	 *           if there are no more unique players.
 	 * 
 	 * @return the number of the random player
 	 */
@@ -299,4 +311,3 @@ public class Players {
 		return randList.remove((int) (Math.random() * randList.size()));
 	}
 }
-

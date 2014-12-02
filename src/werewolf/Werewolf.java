@@ -797,19 +797,15 @@ public class Werewolf implements IntBot {
 					if (!players2.isDead(sender)) {
 						if (players2.isWolf(sender)) {
 							bot.sendMessage(gameChan, getFromFile("FLEE-WOLF", players2.get(sender), NARRATION));
-							// TODO: check for win condition!
 						} else {
 							bot.sendMessage(gameChan, getFromFile("FLEE-VILLAGER", players2.get(sender), NARRATION));
-							// TODO: check for win condition!
 						}
 
 						players2.kill(sender);
 
 						wolfVictim2.removeVote(sender);
 
-						if (checkWin()) {
-							gameTimer.cancel();
-						}
+						checkWin();
 
 						if (status == GameStatus.VOTE) {
 							votes2.removeVote(sender);
@@ -1252,7 +1248,7 @@ public class Werewolf implements IntBot {
 			votes2 = new Votes(players2.numPlayers());
 			wolfVictim2 = new Votes(players2.numPlayers());
 
-			deop();
+			deopPlayers();
 			setRoles();
 
 			if (players2.numPlayers() == 5) { // if there are 5 players, day comes
@@ -1300,7 +1296,7 @@ public class Werewolf implements IntBot {
 		}
 	}
 
-	private void deop() {
+	private void deopPlayers() {
 		User[] users = bot.getUsers(gameChan);
 		for (User user : users) {
 			String nick = user.getNick();
